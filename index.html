@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" data-i18n="meta_description"
+    content="Dental Clinic GT — თანამედროვე სტომატოლოგიური კლინიკა თბილისში. უმტკივნეულო მკურნალობა, იმპლანტაცია, ორთოდონტია და ესთეტიკა." />
+  <meta name="theme-color" content="#2E9BD6" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self';" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Dental Clinic GT — Healthy smiles, expert care" />
+  <meta property="og:description" content="Modern dentistry in Tbilisi. Painless treatment, implants, orthodontics and cosmetic dentistry." />
+  <meta property="og:type" content="website" />
+
+  <title>Dental Clinic GT — სტომატოლოგიური კლინიკა</title>
+
+  <!-- Favicon: tooth icon (inline SVG) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%232E9BD6' d='M12 2C8.5 2 7 4 4.8 4 3 4 2 5.5 2 8c0 3 1 5 1.8 8.5.5 2.2 1 4.5 2.2 4.5 1.3 0 1.4-2.5 2-4.5.4-1.4.9-2.5 2-2.5s1.6 1.1 2 2.5c.6 2 .7 4.5 2 4.5 1.2 0 1.7-2.3 2.2-4.5C21.9 13 23 11 23 8c0-2.5-1-4-2.8-4C18 4 16.5 2 12 2z'/%3E%3C/svg%3E" />
+
+  <!-- Fonts: Inter (Latin) + Noto Sans Georgian -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Georgian:wght@400;500;600;700;800&display=swap" />
+
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
+
+  <!-- Structured data for search engines (Google) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Dentist",
+    "name": "Dental Clinic GT",
+    "description": "Modern dental clinic in Tbilisi — painless treatment, implants, orthodontics and cosmetic dentistry.",
+    "image": "images/hero.jpg",
+    "telephone": "+995599061119",
+    "email": "DentalClinicGT@gmail.com",
+    "url": "https://www.facebook.com/YourDentalClinicGT/",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Navtlughi St 5/7",
+      "addressLocality": "Tbilisi",
+      "addressCountry": "GE"
+    },
+    "areaServed": "Tbilisi",
+    "priceRange": "$$",
+    "sameAs": [
+      "https://www.facebook.com/YourDentalClinicGT/",
+      "https://www.instagram.com/dental_gt_/"
+    ],
+    "openingHoursSpecification": [
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "20:00" },
+      { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:00", "closes": "16:00" }
+    ]
+  }
+  </script>
+</head>
+
+<body class="lang-ka">
+  <!-- Skip link for accessibility -->
+  <a href="#main" class="skip-link" data-i18n="skip_to_content">გადასვლა მთავარ შინაარსზე</a>
+
+  <!-- ============ HEADER ============ -->
+  <header class="site-header" id="siteHeader">
+    <div class="container header-inner">
+      <a href="#hero" class="brand" aria-label="Dental Clinic GT">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="28" height="28">
+            <path fill="currentColor"
+              d="M12 2C8.5 2 7 4 4.8 4 3 4 2 5.5 2 8c0 3 1 5 1.8 8.5.5 2.2 1 4.5 2.2 4.5 1.3 0 1.4-2.5 2-4.5.4-1.4.9-2.5 2-2.5s1.6 1.1 2 2.5c.6 2 .7 4.5 2 4.5 1.2 0 1.7-2.3 2.2-4.5C21.9 13 23 11 23 8c0-2.5-1-4-2.8-4C18 4 16.5 2 12 2z" />
+          </svg>
+        </span>
+        <span class="brand-text">
+          <strong>Dental Clinic</strong><span class="brand-accent">GT</span>
+        </span>
+      </a>
+
+      <nav class="nav" id="primaryNav" aria-label="Primary">
+        <a href="#services" class="nav-link" data-i18n="nav_services">სერვისები</a>
+        <a href="#about" class="nav-link" data-i18n="nav_about">რატომ ჩვენ</a>
+        <a href="#team" class="nav-link" data-i18n="nav_team">ექიმები</a>
+        <a href="#reviews" class="nav-link" data-i18n="nav_reviews">შეფასებები</a>
+        <a href="#faq" class="nav-link" data-i18n="nav_faq">კითხვები</a>
+        <a href="#contact" class="nav-link" data-i18n="nav_contact">კონტაქტი</a>
+        <a href="booking.html" class="btn btn-primary nav-cta" data-i18n="cta_book">ვიზიტის დაჯავშნა</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="lang-toggle" id="langToggle" type="button"
+          data-i18n-aria="lang_toggle_aria" aria-label="Switch language">
+          <span class="lang-current" id="langCurrent">EN</span>
+        </button>
+        <a href="booking.html" class="btn btn-primary btn-sm" data-i18n="cta_book">ვიზიტის დაჯავშნა</a>
+        <button class="nav-toggle" id="navToggle" type="button" aria-expanded="false"
+          aria-controls="primaryNav" data-i18n-aria="menu_aria" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-content reveal">
+          <p class="eyebrow"><span class="dot" aria-hidden="true"></span><span data-i18n="hero_eyebrow">თანამედროვე სტომატოლოგია თბილისში</span></p>
+          <h1 class="hero-title" data-i18n="hero_title">თქვენი ღიმილი ჩვენი ზრუნვის ცენტრშია</h1>
+          <p class="hero-subtitle" data-i18n="hero_subtitle">უმტკივნეულო მკურნალობა, თანამედროვე ტექნოლოგიები და გამოცდილი ექიმები — ერთ სივრცეში.</p>
+          <div class="hero-cta">
+            <a href="booking.html" class="btn btn-primary" data-i18n="cta_book">ვიზიტის დაჯავშნა</a>
+            <a href="tel:+995599061119" class="btn btn-ghost">
+              <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z"/></svg>
+              <span data-i18n="cta_call">დარეკვა</span>
+            </a>
+          </div>
+          <ul class="hero-trust">
+            <li><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span data-i18n="hero_trust_1">სერტიფიცირებული ექიმები</span></li>
+            <li><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span data-i18n="hero_trust_2">სტერილური გარემო</span></li>
+            <li><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span data-i18n="hero_trust_3">გამჭვირვალე ფასები</span></li>
+          </ul>
+        </div>
+
+        <div class="hero-visual reveal">
+          <div class="media-card">
+            <div class="media-placeholder media-hero">
+              <svg class="illus" viewBox="0 0 200 200" aria-hidden="true">
+                <defs>
+                  <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#7FC8EE"/><stop offset="1" stop-color="#2E9BD6"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="100" cy="100" r="92" fill="url(#g1)" opacity="0.18"/>
+                <path fill="#fff" d="M100 48c-22 0-31 12-45 12-11 0-17 9-17 24 0 19 6 31 11 53 3 13 6 27 14 27 8 0 8-15 12-27 2.5-9 6-15 12-15s9.5 6 12 15c4 12 4 27 12 27 8 0 11-14 14-27 5-22 11-34 11-53 0-15-6-24-17-24-14 0-23-12-46-12z"/>
+                <path fill="#C9A24B" d="M100 60c-3 0-5 .5-7 1.2 2 .6 4 1.8 4 4.3 0 3-3 4-6 4.5 4 .8 9 0 9-4.5 0-3-1.5-5-0-5.5z" opacity="0"/>
+              </svg>
+              <img class="media-img" src="images/hero.jpg" alt="" data-i18n-alt="hero_img_alt" loading="eager" width="800" height="880" />
+            </div>
+          </div>
+
+          <div class="float-card float-rating reveal">
+            <span class="stars" aria-hidden="true">★★★★★</span>
+            <strong>4.9</strong>
+            <small data-i18n="float_rating">პაციენტთა შეფასება</small>
+          </div>
+          <div class="float-card float-avail reveal">
+            <span class="pulse" aria-hidden="true"></span>
+            <div>
+              <strong data-i18n="float_avail_title">ხელმისაწვდომია დღეს</strong>
+              <small data-i18n="float_avail_sub">დაჯავშნეთ ვიზიტი ახლავე</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STATS ============ -->
+    <section class="stats" aria-label="Clinic statistics">
+      <div class="container stats-grid">
+        <div class="stat reveal"><strong class="count" data-count="15">15</strong><span class="plus">+</span><p data-i18n="stat_years">წლიანი გამოცდილება</p></div>
+        <div class="stat reveal"><strong class="count" data-count="12000">12,000</strong><span class="plus">+</span><p data-i18n="stat_patients">კმაყოფილი პაციენტი</p></div>
+        <div class="stat reveal"><strong class="count" data-count="20">20</strong><span class="plus">+</span><p data-i18n="stat_doctors">ექიმი და სპეციალისტი</p></div>
+        <div class="stat reveal"><strong>4.9</strong><span class="plus">★</span><p data-i18n="stat_rating">საშუალო შეფასება</p></div>
+      </div>
+    </section>
+
+    <!-- ============ SERVICES ============ -->
+    <section class="section" id="services">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow center"><span data-i18n="services_eyebrow">ჩვენი სერვისები</span></p>
+          <h2 data-i18n="services_title">სრული სტომატოლოგიური მომსახურება</h2>
+          <p class="section-sub" data-i18n="services_sub">პროფილაქტიკიდან რთულ მკურნალობამდე — ყველაფერი ერთ კლინიკაში.</p>
+        </header>
+
+        <div class="cards-grid">
+          <article class="service-card reveal">
+            <span class="service-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12 2C8.5 2 7 4 4.8 4 3 4 2 5.5 2 8c0 3 1 5 1.8 8.5.5 2.2 1 4.5 2.2 4.5 1.3 0 1.4-2.5 2-4.5.4-1.4.9-2.5 2-2.5s1.6 1.1 2 2.5c.6 2 .7 4.5 2 4.5 1.2 0 1.7-2.3 2.2-4.5C21.9 13 23 11 23 8c0-2.5-1-4-2.8-4C18 4 16.5 2 12 2z"/></svg></span>
+            <h3 data-i18n="srv1_title">ზოგადი სტომატოლოგია</h3>
+            <p data-i18n="srv1_desc">კარიესის მკურნალობა, ბჟენი, პროფესიული წმენდა და პროფილაქტიკა.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <span class="service-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4zm0 2.2 6 3v4.8c0 3.9-2.5 6.8-6 7.9V4.2z"/></svg></span>
+            <h3 data-i18n="srv2_title">იმპლანტაცია</h3>
+            <p data-i18n="srv2_desc">დაკარგული კბილის აღდგენა მყარი და ბუნებრივი იმპლანტებით.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <span class="service-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M4 7h16v2H4zm0 4h16v2H4zm2 4h12v2H6z"/></svg></span>
+            <h3 data-i18n="srv3_title">ორთოდონტია</h3>
+            <p data-i18n="srv3_desc">ბრეკეტები და გამჭვირვალე ელაინერები სწორი ღიმილისთვის.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <span class="service-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12 2l2.4 5.4L20 8l-4 4 1 6-5-2.8L7 18l1-6-4-4 5.6-.6z"/></svg></span>
+            <h3 data-i18n="srv4_title">ესთეტიკა და გათეთრება</h3>
+            <p data-i18n="srv4_desc">კბილების გათეთრება და ვინირები ბრწყინვალე ღიმილისთვის.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <span class="service-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12 2a5 5 0 0 1 5 5c0 2-1 3.5-2 5s-1 3-1 5a2 2 0 1 1-4 0c0-2 0-3.5-1-5S7 9 7 7a5 5 0 0 1 5-5z"/></svg></span>
+            <h3 data-i18n="srv5_title">ბავშვთა სტომატოლოგია</h3>
+            <p data-i18n="srv5_desc">ნაზი და მეგობრული მოვლა ბავშვებისთვის, შიშის გარეშე.</p>
+          </article>
+
+          <article class="service-card reveal">
+            <span class="service-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M19 3l-6 6 2 2 6-6V3h-2zM3 5l8 8-2 2-1.5-1.5L3 18v3h3l4.5-4.5L12 18l2-2L6 8 3 5z"/></svg></span>
+            <h3 data-i18n="srv6_title">ქირურგია და პროთეზირება</h3>
+            <p data-i18n="srv6_desc">კბილის ამოღება, ქირურგია და მაღალხარისხიანი პროთეზირება.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT / WHY US ============ -->
+    <section class="section section-alt" id="about">
+      <div class="container about-grid">
+        <div class="about-visual reveal">
+          <div class="media-placeholder media-about">
+            <svg class="illus" viewBox="0 0 200 200" aria-hidden="true">
+              <rect x="20" y="30" width="160" height="140" rx="14" fill="#E6F3FB"/>
+              <rect x="36" y="50" width="80" height="10" rx="5" fill="#9CD0EE"/>
+              <rect x="36" y="70" width="120" height="8" rx="4" fill="#C7E5F6"/>
+              <rect x="36" y="86" width="100" height="8" rx="4" fill="#C7E5F6"/>
+              <circle cx="150" cy="120" r="28" fill="#2E9BD6" opacity="0.9"/>
+              <path fill="#fff" d="M150 108c-5 0-7 3-11 3-3 0-4 2-4 6 0 5 2 8 3 13 .8 3 1.4 6 3 6s1.6-3 2.4-6c.5-2 1.2-3 2.6-3s2 1 2.6 3c.8 3 .8 6 2.4 6s2.2-3 3-6c1-5 3-8 3-13 0-4-1-6-4-6-4 0-6-3-11-3z"/>
+              <rect x="36" y="120" width="70" height="34" rx="8" fill="#C9A24B" opacity="0.85"/>
+            </svg>
+            <img class="media-img" src="images/about.jpg" alt="" data-i18n-alt="about_img_alt" loading="lazy" width="1000" height="850" />
+          </div>
+        </div>
+
+        <div class="about-content reveal">
+          <p class="eyebrow"><span data-i18n="about_eyebrow">რატომ ჩვენ</span></p>
+          <h2 data-i18n="about_title">რატომ Dental Clinic GT?</h2>
+          <p class="section-sub" data-i18n="about_text">ჩვენ ვაერთიანებთ თანამედროვე ტექნოლოგიებსა და ადამიანურ ზრუნვას, რათა ყოველი ვიზიტი იყოს კომფორტული და უმტკივნეულო.</p>
+          <ul class="feature-list">
+            <li><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span data-i18n="about_f1">გამოცდილი და სერტიფიცირებული ექიმები</span></li>
+            <li><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span data-i18n="about_f2">უახლესი აპარატურა და სტერილური გარემო</span></li>
+            <li><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span data-i18n="about_f3">უმტკივნეულო მკურნალობა და ინდივიდუალური მიდგომა</span></li>
+            <li><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span data-i18n="about_f4">გამჭვირვალე ფასები, ფარული გადასახადების გარეშე</span></li>
+            <li><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg><span data-i18n="about_f5">მოქნილი განრიგი და მარტივი ჯავშანი</span></li>
+          </ul>
+          <a href="booking.html" class="btn btn-primary" data-i18n="cta_book">ვიზიტის დაჯავშნა</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TEAM ============ -->
+    <section class="section" id="team">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow center"><span data-i18n="team_eyebrow">ჩვენი გუნდი</span></p>
+          <h2 data-i18n="team_title">გაიცანით ჩვენი ექიმები</h2>
+          <p class="section-sub" data-i18n="team_sub">გამოცდილი სპეციალისტები, რომლებიც ზრუნავენ თქვენს ღიმილზე.</p>
+        </header>
+
+        <div class="cards-grid team-grid">
+          <article class="team-card reveal">
+            <div class="avatar" data-initials="NB" aria-hidden="true"></div>
+            <h3>Dr. Nino Beridze</h3>
+            <p class="role" data-i18n="team_role_1">თერაპევტი</p>
+          </article>
+          <article class="team-card reveal">
+            <div class="avatar" data-initials="GK" aria-hidden="true"></div>
+            <h3>Dr. Giorgi Kapanadze</h3>
+            <p class="role" data-i18n="team_role_2">იმპლანტოლოგი · ქირურგი</p>
+          </article>
+          <article class="team-card reveal">
+            <div class="avatar" data-initials="AT" aria-hidden="true"></div>
+            <h3>Dr. Ana Tsiklauri</h3>
+            <p class="role" data-i18n="team_role_3">ორთოდონტი</p>
+          </article>
+          <article class="team-card reveal">
+            <div class="avatar" data-initials="LM" aria-hidden="true"></div>
+            <h3>Dr. Luka Maisuradze</h3>
+            <p class="role" data-i18n="team_role_4">ბავშვთა სტომატოლოგი</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REVIEWS ============ -->
+    <section class="section section-alt" id="reviews">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow center"><span data-i18n="reviews_eyebrow">შეფასებები</span></p>
+          <h2 data-i18n="reviews_title">რას ამბობენ ჩვენი პაციენტები</h2>
+        </header>
+
+        <div class="cards-grid reviews-grid">
+          <article class="review-card reveal">
+            <span class="stars" aria-label="5 / 5">★★★★★</span>
+            <p data-i18n="review1_text">„საუკეთესო კლინიკა! ექიმები ყურადღებიანები არიან და მკურნალობა სრულიად უმტკივნეულო იყო."</p>
+            <div class="review-author"><span class="avatar avatar-sm" data-initials="TM" aria-hidden="true"></span><div><strong>Tamar M.</strong><small data-i18n="review1_meta">იმპლანტაცია</small></div></div>
+          </article>
+          <article class="review-card reveal">
+            <span class="stars" aria-label="5 / 5">★★★★★</span>
+            <p data-i18n="review2_text">„ბავშვს ეშინოდა სტომატოლოგის, აქ კი თამაშ-თამაშით მოვიდა აზრზე. დიდი მადლობა!"</p>
+            <div class="review-author"><span class="avatar avatar-sm" data-initials="DK" aria-hidden="true"></span><div><strong>Davit K.</strong><small data-i18n="review2_meta">ბავშვთა მკურნალობა</small></div></div>
+          </article>
+          <article class="review-card reveal">
+            <span class="stars" aria-label="5 / 5">★★★★★</span>
+            <p data-i18n="review3_text">„გათეთრების შემდეგ ღიმილი ამეწყო. თანამედროვე გარემო და პროფესიონალი გუნდი."</p>
+            <div class="review-author"><span class="avatar avatar-sm" data-initials="SN" aria-hidden="true"></span><div><strong>Salome N.</strong><small data-i18n="review3_meta">ესთეტიკა</small></div></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="section" id="faq">
+      <div class="container">
+        <header class="section-head reveal">
+          <p class="eyebrow center"><span data-i18n="faq_eyebrow">ხშირი კითხვები</span></p>
+          <h2 data-i18n="faq_title">პასუხები თქვენს კითხვებზე</h2>
+        </header>
+
+        <div class="faq-list reveal">
+          <details class="faq-item">
+            <summary><span data-i18n="faq_q1">როგორ დავჯავშნო ვიზიტი?</span><span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p data-i18n="faq_a1">შეავსეთ ჯავშნის ფორმა საიტზე ან დაგვირეკეთ ნომერზე +995 599 06 11 19 — ჩვენ შეგირჩევთ თქვენთვის სასურველ დროს.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary><span data-i18n="faq_q2">მკურნალობა მტკივნეულია?</span><span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p data-i18n="faq_a2">არა. ჩვენ ვიყენებთ თანამედროვე ანესთეზიასა და ნაზ ტექნიკას, რათა პროცედურა მაქსიმალურად კომფორტული იყოს.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary><span data-i18n="faq_q3">გაქვთ განვადება?</span><span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p data-i18n="faq_a3">დიახ, ხელმისაწვდომია მოქნილი გადახდის პირობები. დეტალები დააზუსტეთ ვიზიტისას ან სატელეფონო ზარით.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary><span data-i18n="faq_q4">რამდენ ხანს გრძელდება იმპლანტის ჩადგმა?</span><span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p data-i18n="faq_a4">თავად ჩადგმა ჩვეულებრივ 30–60 წუთს გრძელდება, სრული პროცესი კი ინდივიდუალურია — ექიმი დეტალურ გეგმას პირველივე კონსულტაციაზე შეგიდგენთ.</p></div>
+          </details>
+          <details class="faq-item">
+            <summary><span data-i18n="faq_q5">მკურნალობთ ბავშვებს?</span><span class="faq-icon" aria-hidden="true"></span></summary>
+            <div class="faq-answer"><p data-i18n="faq_a5">დიახ, გვყავს ბავშვთა სტომატოლოგი, რომელიც სპეციალურ, მეგობრულ მიდგომას იყენებს პატარებისთვის.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT / BOOKING ============ -->
+    <section class="section section-alt" id="contact">
+      <div class="container contact-grid">
+        <div class="contact-info reveal">
+          <p class="eyebrow"><span data-i18n="contact_eyebrow">დაგვიკავშირდით</span></p>
+          <h2 data-i18n="contact_title">დაჯავშნეთ ვიზიტი</h2>
+          <p class="section-sub" data-i18n="contact_sub">შეავსეთ ფორმა და ჩვენ დაგიკავშირდებით სასურველი დროის დასადასტურებლად. ან დაგვირეკეთ პირდაპირ.</p>
+
+          <ul class="contact-list">
+            <li>
+              <span class="ci-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg></span>
+              <div><strong data-i18n="contact_addr_label">მისამართი</strong><span data-i18n="contact_addr">თბილისი, ნავთლუღის ქ. 5/7 (მეტრო „ისანთან")</span></div>
+            </li>
+            <li>
+              <span class="ci-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z"/></svg></span>
+              <div><strong data-i18n="contact_phone_label">ტელეფონი</strong><a href="tel:+995599061119">+995 599 06 11 19</a></div>
+            </li>
+            <li>
+              <span class="ci-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm8 7L4 6.5V8l8 4.5L20 8V6.5L12 11z"/></svg></span>
+              <div><strong data-i18n="contact_email_label">ელ. ფოსტა</strong><a href="mailto:DentalClinicGT@gmail.com">DentalClinicGT@gmail.com</a></div>
+            </li>
+            <li>
+              <span class="ci-icon" aria-hidden="true"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 10V7h-2v6l5 3 1-1.7-4-2.3z"/></svg></span>
+              <div><strong data-i18n="contact_hours_label">სამუშაო საათები</strong><span data-i18n="contact_hours">ორშ–პარ 09:00–20:00 · შაბ 10:00–16:00 · კვ დახურულია</span></div>
+            </li>
+          </ul>
+
+          <div class="map-placeholder" role="img" data-i18n-aria="map_alt" aria-label="Clinic location on the map">
+            <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+            <a href="https://www.google.com/maps/search/?api=1&query=Dental%20Clinic%20GT%2C%20Navtlughi%205%2F7%2C%20Tbilisi" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" data-i18n="map_link">რუკაზე ნახვა</a>
+          </div>
+        </div>
+
+        <div class="contact-form-wrap booking-cta reveal">
+          <div class="booking-cta-inner">
+            <span class="cta-ico" aria-hidden="true"><svg viewBox="0 0 24 24" width="32" height="32"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"/></svg></span>
+            <h3 data-i18n="book_title">დაჯავშნე ონლაინ</h3>
+            <p class="section-sub" data-i18n="book_cta_text">ნახეთ ექიმების ცოცხალი განრიგი და დაჯავშნეთ თავისუფალი დრო წამებში.</p>
+            <a href="booking.html" class="btn btn-primary btn-block" data-i18n="cta_book_online">ონლაინ დაჯავშნა</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#hero" class="brand brand-footer" aria-label="Dental Clinic GT">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="26" height="26"><path fill="currentColor" d="M12 2C8.5 2 7 4 4.8 4 3 4 2 5.5 2 8c0 3 1 5 1.8 8.5.5 2.2 1 4.5 2.2 4.5 1.3 0 1.4-2.5 2-4.5.4-1.4.9-2.5 2-2.5s1.6 1.1 2 2.5c.6 2 .7 4.5 2 4.5 1.2 0 1.7-2.3 2.2-4.5C21.9 13 23 11 23 8c0-2.5-1-4-2.8-4C18 4 16.5 2 12 2z"/></svg>
+          </span>
+          <span class="brand-text"><strong>Dental Clinic</strong><span class="brand-accent">GT</span></span>
+        </a>
+        <p data-i18n="footer_tagline">თქვენი ღიმილი — ჩვენი პრიორიტეტი.</p>
+        <div class="socials">
+          <a href="https://www.facebook.com/YourDentalClinicGT/" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M13 22v-8h3l.5-3.5H13V8.3c0-1 .3-1.7 1.8-1.7H17V3.5C16.6 3.4 15.5 3.3 14.3 3.3 11.7 3.3 10 4.9 10 7.9v2.6H7V14h3v8h3z"/></svg></a>
+          <a href="https://www.instagram.com/dental_gt_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 8.5A3.5 3.5 0 1 0 12 15.5 3.5 3.5 0 0 0 12 8.5zm0 5.8a2.3 2.3 0 1 1 0-4.6 2.3 2.3 0 0 1 0 4.6zM16 3H8a5 5 0 0 0-5 5v8a5 5 0 0 0 5 5h8a5 5 0 0 0 5-5V8a5 5 0 0 0-5-5zm3.5 13A3.5 3.5 0 0 1 16 19.5H8A3.5 3.5 0 0 1 4.5 16V8A3.5 3.5 0 0 1 8 4.5h8A3.5 3.5 0 0 1 19.5 8v8zm-3.1-8.9a.9.9 0 1 0 0 1.8.9.9 0 0 0 0-1.8z"/></svg></a>
+          <a href="tel:+995599061119" aria-label="Phone"><svg viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z"/></svg></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_nav">ნავიგაცია</h4>
+        <a href="#services" data-i18n="nav_services">სერვისები</a>
+        <a href="#about" data-i18n="nav_about">რატომ ჩვენ</a>
+        <a href="#team" data-i18n="nav_team">ექიმები</a>
+        <a href="#reviews" data-i18n="nav_reviews">შეფასებები</a>
+        <a href="#faq" data-i18n="nav_faq">კითხვები</a>
+        <a href="#contact" data-i18n="nav_contact">კონტაქტი</a>
+      </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="footer_contact">კონტაქტი</h4>
+        <span data-i18n="contact_addr">თბილისი, ნავთლუღის ქ. 5/7 (მეტრო „ისანთან")</span>
+        <a href="tel:+995599061119">+995 599 06 11 19</a>
+        <a href="mailto:DentalClinicGT@gmail.com">DentalClinicGT@gmail.com</a>
+        <span data-i18n="contact_hours">ორშ–პარ 09:00–20:00 · შაბ 10:00–16:00 · კვ დახურულია</span>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="container">
+        <span>© <span id="year">2026</span> Dental Clinic GT. <span data-i18n="footer_rights">ყველა უფლება დაცულია.</span></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Sticky mobile action bar (visible on phones) -->
+  <nav class="mobile-bar" aria-label="Quick actions">
+    <a href="tel:+995599061119" class="mbar-btn mbar-call">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.6.1.4 0 .8-.3 1l-2.2 2.2z"/></svg>
+      <span data-i18n="cta_call">დარეკვა</span>
+    </a>
+    <a href="booking.html" class="mbar-btn mbar-book">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 16H5V9h14v11z"/></svg>
+      <span data-i18n="cta_book">ვიზიტის დაჯავშნა</span>
+    </a>
+  </nav>
+
+  <button class="to-top" id="toTop" type="button" data-i18n-aria="to_top_aria" aria-label="Back to top" hidden>
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 8l-6 6 1.4 1.4L12 10.8l4.6 4.6L18 14z"/></svg>
+  </button>
+</body>
+</html>

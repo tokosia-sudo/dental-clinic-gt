@@ -1,0 +1,95 @@
+/* ============================================================
+   Dental Clinic GT — Admin panel styles
+   Uses design tokens from styles.css
+   ============================================================ */
+
+.adm-body-page { background: var(--surface); }
+.adm-app { min-height: 100vh; }
+
+/* ---------- Login ---------- */
+.adm-login { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; }
+.adm-login-card { width: 100%; max-width: 380px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 2rem; text-align: center; }
+.adm-login-card .brand-mark { margin: 0 auto 1rem; }
+.adm-login-card h1 { font-size: 1.4rem; }
+.adm-login-card .adm-sub { color: var(--muted); margin-bottom: 1.4rem; }
+.adm-login-card .field { text-align: left; margin-bottom: 1rem; }
+.adm-err { color: var(--danger); font-size: .85rem; margin-bottom: .8rem; }
+.adm-back { display: inline-block; margin-top: 1rem; color: var(--muted); font-size: .9rem; }
+.adm-back:hover { color: var(--blue-700); }
+
+/* ---------- Topbar ---------- */
+.adm-topbar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  background: var(--ink); color: #fff; padding: .8rem clamp(1rem, 4vw, 2rem); }
+.adm-brand { display: flex; align-items: center; gap: .6rem; }
+.adm-brand .brand-mark { width: 36px; height: 36px; }
+.adm-brand strong { font-weight: 800; }
+.adm-tag { background: rgba(255,255,255,.12); padding: .15rem .6rem; border-radius: 999px; font-size: .72rem; }
+.adm-top-actions { display: flex; align-items: center; gap: .5rem; }
+.adm-top-actions .lang-toggle { background: rgba(255,255,255,.12); border-color: transparent; color: #fff; }
+.adm-top-actions .btn-ghost { background: rgba(255,255,255,.1); border-color: transparent; color: #fff; }
+.adm-top-actions .btn-ghost:hover { background: rgba(255,255,255,.2); }
+
+.adm-demo { background: #FBF7EC; color: #8A6D12; font-size: .82rem; text-align: center; padding: .55rem 1rem; border-bottom: 1px solid #EBDFC4; }
+
+/* ---------- Tabs ---------- */
+.adm-tabs { display: flex; gap: .3rem; flex-wrap: wrap; padding: 1rem clamp(1rem, 4vw, 2rem) 0; }
+.adm-tab { background: var(--white); border: 1px solid var(--line); border-bottom: none; color: var(--muted);
+  padding: .6rem 1.1rem; border-radius: 10px 10px 0 0; font-weight: 600; font-size: .9rem; }
+.adm-tab:hover { color: var(--blue-700); }
+.adm-tab.is-active { color: var(--blue-700); border-color: var(--blue-200); background: var(--white); box-shadow: 0 -2px 0 var(--blue-500) inset; }
+
+.adm-msg { margin: .8rem clamp(1rem, 4vw, 2rem) 0; background: var(--blue-50); color: var(--blue-700); border-radius: var(--radius-sm); padding: .6rem .9rem; font-size: .88rem; font-weight: 600; }
+
+.adm-body { padding: 1.2rem clamp(1rem, 4vw, 2rem) 3rem; }
+
+/* ---------- Controls ---------- */
+.adm-controls { display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.adm-controls .field { margin: 0; }
+.adm-count { background: var(--white); border: 1px solid var(--line); border-radius: 999px; padding: .45rem .9rem; font-size: .85rem; font-weight: 600; color: var(--blue-700); }
+.adm-empty { color: var(--muted); padding: 1.5rem; text-align: center; background: var(--white); border: 1px dashed var(--line); border-radius: var(--radius); }
+.adm-empty.sm { padding: .8rem; font-size: .85rem; }
+
+/* ---------- Schedule (doctor columns) ---------- */
+.adm-sched { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.adm-doc-col { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
+.adm-doc-col h3 { font-size: 1rem; margin-bottom: .8rem; padding-bottom: .6rem; border-bottom: 1px solid var(--line); }
+.adm-doc-col h3 small { color: var(--blue-600); font-weight: 600; font-size: .78rem; display: block; }
+.adm-appt { display: grid; grid-template-columns: auto 1fr auto; gap: .6rem; align-items: start; padding: .7rem 0; border-bottom: 1px solid var(--surface-2); position: relative; }
+.adm-appt:last-child { border-bottom: none; }
+.adm-appt-time { font-weight: 700; color: var(--ink); font-size: .85rem; line-height: 1.2; }
+.adm-appt-time small { display: block; color: var(--muted); font-weight: 500; font-size: .68rem; }
+.adm-appt-main strong { display: block; font-size: .9rem; }
+.adm-appt-main span { font-size: .8rem; color: var(--muted); }
+.adm-appt-main em { display: block; font-size: .76rem; color: var(--muted); font-style: italic; margin-top: 2px; }
+.adm-chan { align-self: center; font-size: .66rem; font-weight: 700; padding: .2rem .5rem; border-radius: 999px; white-space: nowrap; }
+.chan-online { background: var(--blue-50); color: var(--blue-700); }
+.chan-phone { background: #E7F6EE; color: #1F7A50; }
+.chan-messenger { background: #EDE9FB; color: #6048C7; }
+.chan-walkin { background: #FBF1E3; color: #9A6A1E; }
+.adm-x { background: none; border: none; color: var(--muted); font-size: .9rem; cursor: pointer; line-height: 1; padding: .2rem; border-radius: 6px; }
+.adm-x:hover { color: var(--danger); background: #FCEDED; }
+
+/* ---------- Forms / cards ---------- */
+.adm-form, .adm-card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 1.3rem; max-width: 760px; }
+.adm-card { margin-top: 1.2rem; }
+.adm-card h3 { font-size: 1rem; margin-bottom: 1rem; }
+.adm-form .field, .adm-card .field { margin-bottom: 1rem; }
+.adm-checks { display: flex; flex-wrap: wrap; gap: .5rem 1rem; }
+.adm-check { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; color: var(--ink); }
+.adm-num { width: 90px; }
+
+/* ---------- Tables ---------- */
+.adm-table { width: 100%; border-collapse: collapse; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.adm-table th, .adm-table td { text-align: left; padding: .8rem 1rem; border-bottom: 1px solid var(--surface-2); font-size: .88rem; vertical-align: middle; }
+.adm-table th { background: var(--surface); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+.adm-table tr:last-child td { border-bottom: none; }
+.adm-pill { display: inline-block; background: var(--blue-50); color: var(--blue-700); font-size: .72rem; padding: .15rem .5rem; border-radius: 999px; margin: 1px 0; }
+.adm-toggle { border: 1.5px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: .3rem .8rem; font-size: .78rem; font-weight: 600; cursor: pointer; }
+.adm-toggle.on { background: #E7F6EE; border-color: #BFE6CF; color: #1F7A50; }
+
+@media (max-width: 560px) {
+  .adm-table thead { display: none; }
+  .adm-table, .adm-table tbody, .adm-table tr, .adm-table td { display: block; width: 100%; }
+  .adm-table tr { border-bottom: 1px solid var(--line); padding: .5rem 0; }
+  .adm-table td { border: none; padding: .35rem 1rem; }
+}
