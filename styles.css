@@ -554,6 +554,15 @@ p  { color: var(--muted); }
   }
   body { padding-bottom: 66px; }
   .to-top { bottom: 78px; }
+
+  /* Booking page: keep the header uncluttered on phones (brand already links home) */
+  .header-actions .btn-ghost { display: none; }
+
+  /* Booking widget: full-width, tidy, tappable option rows on phones */
+  .bk-chips { flex-direction: column; }
+  .bk-chip { display: flex; width: 100%; flex-direction: row; align-items: center; justify-content: space-between; gap: .6rem; padding: .8rem 1rem; }
+  .bk-chip > span { flex: 1; }
+  .bk-chip > small { flex-shrink: 0; white-space: nowrap; text-align: right; }
 }
 
 @media (max-width: 480px) {
