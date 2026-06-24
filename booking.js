@@ -18,6 +18,8 @@
       slot_taken: 'ეს დრო ახლახან დაიკავეს — აირჩიეთ სხვა.',
       demo_note: 'ℹ️ სანიმუშო რეჟიმი — ჯავშნები ინახება მხოლოდ ამ ბრაუზერში. ცოცხალ რეჟიმში (Supabase) დაჯავშნული დრო მაშინვე დაიკეტება ყველასთვის.',
       today: 'დღეს', tomorrow: 'ხვალ',
+      loading: 'იტვირთება…',
+      load_error: 'ჯავშანი ამ წუთას მიუწვდომელია. გთხოვთ დაგვირეკოთ: +995 599 06 11 19',
     },
     en: {
       step_service: 'Service', step_doctor: 'Doctor', step_date: 'Day', step_time: 'Available time',
@@ -30,6 +32,8 @@
       slot_taken: 'That time was just taken — please pick another.',
       demo_note: 'ℹ️ Sample mode — bookings are stored only in this browser. In live mode (Supabase) a booked slot closes instantly for everyone.',
       today: 'Today', tomorrow: 'Tomorrow',
+      loading: 'Loading…',
+      load_error: 'Booking is momentarily unavailable. Please call us: +995 599 06 11 19',
     },
   };
 
@@ -182,7 +186,7 @@
   }
   function onInput(e) { const f = e.target.getAttribute && e.target.getAttribute('data-field'); if (f) state.details[f] = e.target.value; }
 
-  function confirmBooking() {
+  async function confirmBooking() {
     const d = state.details; const errors = {};
     if (!d.name.trim()) errors.name = 'err_required'; else if (d.name.trim().length < 2) errors.name = 'err_name';
     const phone = d.phone.replace(/[\s\-()]/g, '');
@@ -191,7 +195,7 @@
     state.errors = errors;
     if (Object.keys(errors).length) { render(); const er = root.querySelector('.error'); if (er) er.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
 
-    const res = D.createAppointment({
+    const res = await D.createAppointment({
       serviceId: state.serviceId,
       doctorId: state.slotDoctorId || (D.getDoctorsForService(state.serviceId)[0] || {}).id,
       dateISO: state.dateISO, time: state.time,
@@ -206,13 +210,17 @@
   function init() {
     root = document.getElementById('bookingApp');
     if (!root || !D) return;
-    // sensible default service
-    const services = D.getServices();
-    if (services.length) state.serviceId = services[0].id;
     root.addEventListener('click', onClick);
     root.addEventListener('input', onInput);
     window.onLangChange = render;
-    render();
+    // Live data loads from the online database first; show a brief loading note.
+    root.innerHTML = `<p class="bk-hint">${esc(t('loading'))}</p>`;
+    Promise.resolve(D.ready).then((ok) => {
+      if (ok === false) { root.innerHTML = `<p class="bk-empty">${esc(t('load_error'))}</p>`; return; }
+      const services = D.getServices();
+      if (services.length) state.serviceId = services[0].id;
+      render();
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
