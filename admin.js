@@ -1,53 +1,52 @@
 /* ============================================================
-   Dental Clinic GT — Admin panel
-   Manage the schedule (who/when/which doctor/which procedure/how long),
-   add phone & messenger bookings, and manage doctors / services / hours.
-   Uses ClinicData (data.js) — same store the booking page writes to.
+   Dental Clinic GT — Admin panel (LIVE)
+   Manage the schedule, add phone/messenger/walk-in bookings, manage
+   doctors / services / hours, and export bookings to Excel (CSV).
+   Backed by Supabase (window.ClinicData from supabase-admin-data.js).
 
-   PHASE 1: simple passcode gate (DEMO ONLY — not real security).
-   PHASE 2: replaced by real Supabase Auth + server-side rules.
+   Sign-in is real (Supabase Auth, email + password). Only a signed-in
+   staff member can read patient details or change anything.
    ============================================================ */
 'use strict';
 
 (function () {
-  const DEMO_PASS = 'admin'; // DEMO ONLY — replaced by real login in Phase 2
   const D = window.ClinicData;
 
   const ADMIN_I18N = {
     ka: {
       panel: 'ადმინ-პანელი',
-      login_title: 'შესვლა', login_hint: 'შეიყვანეთ კოდი (დემო: admin)', login_btn: 'შესვლა', login_err: 'არასწორი კოდი',
-      logout: 'გასვლა',
+      login_title: 'შესვლა', login_email: 'ელ. ფოსტა', login_password: 'პაროლი', login_btn: 'შესვლა', login_err: 'არასწორი ელ. ფოსტა ან პაროლი',
+      loading: 'იტვირთება…', logout: 'გასვლა',
       tab_schedule: 'განრიგი', tab_add: 'ჩაწერის დამატება', tab_doctors: 'ექიმები', tab_services: 'სერვისები', tab_prices: 'ფასები', tab_hours: 'საათები',
       price_from: 'დან (₾)', price_to: 'მდე (₾)', category: 'კატეგორია', pcat_gen: 'ზოგადი', pcat_cosm: 'ესთეტიკა', pcat_surg: 'ქირურგია/პროთეზი', pcat_ortho: 'ორთოდონტია', pcat_kids: 'ბავშვები',
       date: 'თარიღი', doctor: 'ექიმი', service: 'სერვისი', time: 'დრო', patient: 'პაციენტი', phone: 'ტელეფონი', channel: 'არხი', note: 'შენიშვნა', duration: 'ხანგრძლივობა', action: 'მოქმედება',
       add_btn: 'ჩაწერის დამატება', cancel: 'გაუქმება', cancel_confirm: 'დარწმუნებული ხართ, რომ გსურთ ამ ჩაწერის გაუქმება?',
       ch_online: 'ონლაინ', ch_phone: 'ტელეფონი', ch_messenger: 'მესენჯერი', ch_walkin: 'ადგილზე',
-      no_appts: 'ამ დღეს ჩანაწერი არ არის.', count_today: 'ჩაწერა ამ დღეს',
+      no_appts: 'ამ დღეს ჩანაწერი არ არის.', count_today: 'ჩაწერა ამ დღეს', export: 'Excel-ში ჩამოტვირთვა',
       active: 'აქტიური', inactive: 'არააქტიური', remove: 'წაშლა', save: 'შენახვა', add: 'დამატება', edit: 'რედაქტირება',
       role: 'პოზიცია', services_label: 'სერვისები', duration_min: 'ხანგრძლივობა (წთ)', name: 'სახელი',
       open: 'გახსნა', close: 'დახურვა', sat_close: 'შაბათს დახურვა', step: 'ინტერვალი (წთ)', days: 'სამუშაო დღეები',
-      added_ok: 'ჩაწერა დაემატა ✓', slot_taken: 'ეს დრო უკვე დაკავებულია — აირჩიეთ სხვა.', fill_required: 'შეავსეთ სავალდებულო ველები სწორად.',
+      added_ok: 'შესრულდა ✓', slot_taken: 'ეს დრო უკვე დაკავებულია — აირჩიეთ სხვა.', fill_required: 'შეავსეთ სავალდებულო ველები სწორად.', save_err: 'ვერ შესრულდა — სცადეთ თავიდან.',
       pick_time: '— აირჩიეთ დრო —', no_free: 'თავისუფალი დრო არ არის',
-      demo_banner: 'სანიმუშო რეჟიმი — მონაცემები ინახება ამ ბრაუზერში. Supabase-ის ჩართვის შემდეგ გახდება ცოცხალი და დაცული.',
+      live_banner: 'ცოცხალი რეჟიმი — მონაცემები დაცულ ონლაინ ბაზაშია.',
       back_site: '← საიტზე',
     },
     en: {
       panel: 'Admin panel',
-      login_title: 'Sign in', login_hint: 'Enter the code (demo: admin)', login_btn: 'Sign in', login_err: 'Wrong code',
-      logout: 'Sign out',
+      login_title: 'Sign in', login_email: 'Email', login_password: 'Password', login_btn: 'Sign in', login_err: 'Wrong email or password',
+      loading: 'Loading…', logout: 'Sign out',
       tab_schedule: 'Schedule', tab_add: 'Add booking', tab_doctors: 'Doctors', tab_services: 'Services', tab_prices: 'Prices', tab_hours: 'Hours',
       price_from: 'From (₾)', price_to: 'To (₾)', category: 'Category', pcat_gen: 'General', pcat_cosm: 'Cosmetic', pcat_surg: 'Surgery/Prosth.', pcat_ortho: 'Orthodontics', pcat_kids: 'Kids',
       date: 'Date', doctor: 'Doctor', service: 'Service', time: 'Time', patient: 'Patient', phone: 'Phone', channel: 'Channel', note: 'Note', duration: 'Duration', action: 'Action',
       add_btn: 'Add booking', cancel: 'Cancel', cancel_confirm: 'Are you sure you want to cancel this booking?',
       ch_online: 'Online', ch_phone: 'Phone', ch_messenger: 'Messenger', ch_walkin: 'Walk-in',
-      no_appts: 'No bookings on this day.', count_today: 'bookings this day',
+      no_appts: 'No bookings on this day.', count_today: 'bookings this day', export: 'Export to Excel',
       active: 'Active', inactive: 'Inactive', remove: 'Delete', save: 'Save', add: 'Add', edit: 'Edit',
       role: 'Role', services_label: 'Services', duration_min: 'Duration (min)', name: 'Name',
       open: 'Open', close: 'Close', sat_close: 'Saturday close', step: 'Interval (min)', days: 'Working days',
-      added_ok: 'Booking added ✓', slot_taken: 'That time is already taken — pick another.', fill_required: 'Please fill the required fields correctly.',
+      added_ok: 'Done ✓', slot_taken: 'That time is already taken — pick another.', fill_required: 'Please fill the required fields correctly.', save_err: 'Could not save — please try again.',
       pick_time: '— pick a time —', no_free: 'No free times',
-      demo_banner: 'Sample mode — data is stored in this browser. After Supabase is connected it becomes live and secure.',
+      live_banner: 'Live mode — data is stored in the secure online database.',
       back_site: '← Site',
     },
   };
@@ -61,7 +60,7 @@
   }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
   function serviceName(s) { if (!s) return ''; return (s.nameKey && t(s.nameKey) !== s.nameKey ? t(s.nameKey) : (lang() === 'ka' ? s.name_ka : s.name_en)) || s.id; }
-  function doctorRole(d) { return d && d.roleKey ? t(d.roleKey) : ''; }
+  function doctorRole(d) { if (!d) return ''; if (d.roleKey && t(d.roleKey) !== d.roleKey) return t(d.roleKey); return (lang() === 'ka' ? d.role_ka : d.role_en) || ''; }
   function channelLabel(c) { return t('ch_' + (c || 'online')) || c; }
   function pad(n) { return String(n).padStart(2, '0'); }
   function isoToday() { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
@@ -74,10 +73,11 @@
     msg: '',
   };
   let root = null;
+  let loaded = false;
 
-  /* ---------- auth ---------- */
-  function authed() { try { return sessionStorage.getItem('dcgt_admin') === '1'; } catch (e) { return false; } }
-  function setAuthed(v) { try { v ? sessionStorage.setItem('dcgt_admin', '1') : sessionStorage.removeItem('dcgt_admin'); } catch (e) {} }
+  /* ---------- auth (Supabase) ---------- */
+  function authed() { return !!(window.SB && window.SB.isAuthed()); }
+  async function ensureLoaded(force) { if (loaded && !force) return; await D.load(); loaded = true; }
 
   function renderLogin(err) {
     root.innerHTML = `<div class="adm-login">
@@ -85,8 +85,10 @@
         <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="28" height="28"><path fill="currentColor" d="M12 2C8.5 2 7 4 4.8 4 3 4 2 5.5 2 8c0 3 1 5 1.8 8.5.5 2.2 1 4.5 2.2 4.5 1.3 0 1.4-2.5 2-4.5.4-1.4.9-2.5 2-2.5s1.6 1.1 2 2.5c.6 2 .7 4.5 2 4.5 1.2 0 1.7-2.3 2.2-4.5C21.9 13 23 11 23 8c0-2.5-1-4-2.8-4C18 4 16.5 2 12 2z"/></svg></span>
         <h1>Dental Clinic GT</h1>
         <p class="adm-sub">${esc(t('panel'))}</p>
-        <div class="field"><label for="adm-pass">${esc(t('login_title'))}</label>
-          <input id="adm-pass" type="password" data-field="pass" placeholder="${esc(t('login_hint'))}" /></div>
+        <div class="field"><label for="adm-email">${esc(t('login_email'))}</label>
+          <input id="adm-email" type="email" data-field="email" autocomplete="username" /></div>
+        <div class="field"><label for="adm-pass">${esc(t('login_password'))}</label>
+          <input id="adm-pass" type="password" data-field="pass" autocomplete="current-password" /></div>
         ${err ? `<p class="adm-err">${esc(t('login_err'))}</p>` : ''}
         <button type="button" class="btn btn-primary btn-block" data-act="login">${esc(t('login_btn'))}</button>
         <a href="index.html" class="adm-back">${esc(t('back_site'))}</a>
@@ -94,10 +96,23 @@
     const inp = root.querySelector('#adm-pass');
     if (inp) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') tryLogin(); });
   }
-  function tryLogin() {
-    const inp = root.querySelector('#adm-pass');
-    if (inp && inp.value === DEMO_PASS) { setAuthed(true); render(); }
-    else renderLogin(true);
+  function renderLoading() {
+    root.innerHTML = `<div class="adm-login"><div class="adm-login-card"><p class="adm-sub">${esc(t('loading'))}</p></div></div>`;
+  }
+  async function tryLogin() {
+    const email = ((root.querySelector('#adm-email') || {}).value || '').trim();
+    const pass = (root.querySelector('#adm-pass') || {}).value || '';
+    renderLoading();
+    try {
+      await window.SB.signIn(email, pass);
+      await ensureLoaded(true);
+      render();
+    } catch (e) { renderLogin(true); }
+  }
+  async function doLogout() {
+    try { await window.SB.signOut(); } catch (e) {}
+    loaded = false; state.msg = '';
+    renderLogin(false);
   }
 
   /* ---------- shell ---------- */
@@ -112,7 +127,7 @@
         <button class="btn btn-ghost btn-sm" data-act="logout" type="button">${esc(t('logout'))}</button>
       </div>
     </header>
-    <p class="adm-demo">${esc(t('demo_banner'))}</p>
+    <p class="adm-demo">${esc(t('live_banner'))}</p>
     <nav class="adm-tabs">${tabs.map((tb) => `<button type="button" class="adm-tab${state.tab === tb ? ' is-active' : ''}" data-act="tab" data-id="${tb}">${esc(t('tab_' + tb))}</button>`).join('')}</nav>
     ${state.msg ? `<p class="adm-msg">${esc(state.msg)}</p>` : ''}
     <div class="adm-body">${inner}</div>`;
@@ -120,11 +135,19 @@
 
   /* ---------- tab: schedule ---------- */
   function renderSchedule() {
-    const docs = D.getDoctors();
     const all = D.listAppointments({ dateISO: state.dateISO });
+    // Show a column for every active doctor, PLUS any doctor who has a booking that day
+    // (e.g. an inactive doctor) so the count always matches what is shown.
+    const activeDocs = D.getDoctors();
+    const shownIds = {};
+    activeDocs.forEach((d) => { shownIds[d.id] = true; });
+    const extra = D.getAllDoctors().filter((d) => !shownIds[d.id] && all.some((a) => a.doctorId === d.id));
+    const docs = activeDocs.concat(extra);
+
     const head = `<div class="adm-controls">
       <div class="field"><label for="adm-date">${esc(t('date'))}</label><input id="adm-date" type="date" data-field="schedDate" value="${esc(state.dateISO)}" /></div>
       <span class="adm-count">${all.length} ${esc(t('count_today'))}</span>
+      <button type="button" class="btn btn-ghost btn-sm" data-act="export">${esc(t('export'))} ⬇</button>
     </div>`;
     if (!all.length) return head + `<p class="adm-empty">${esc(t('no_appts'))}</p>`;
     const cols = docs.map((doc) => {
@@ -244,7 +267,7 @@
         <div class="field"><label>${esc(t('open'))}</label><input type="time" id="h-open" value="${esc(D.toHHMM(h.openMin))}" /></div>
         <div class="field"><label>${esc(t('close'))}</label><input type="time" id="h-close" value="${esc(D.toHHMM(h.closeMin))}" /></div>
         <div class="field"><label>${esc(t('sat_close'))}</label><input type="time" id="h-sat" value="${esc(D.toHHMM(h.satCloseMin || h.closeMin))}" /></div>
-        <div class="field"><label>${esc(t('step'))}</label><input type="number" id="h-step" value="${h.stepMin}" min="10" max="60" step="5" /></div>
+        <div class="field"><label>${esc(t('step'))}</label><input type="number" id="h-step" value="${h.stepMin}" min="10" max="60" step="5" disabled /></div>
       </div>
       <div class="field"><label>${esc(t('days'))}</label><div class="adm-checks">${days}</div></div>
       <button type="button" class="btn btn-primary" data-act="hoursSave">${esc(t('save'))}</button>
@@ -264,33 +287,102 @@
     root.innerHTML = renderShell(inner);
   }
 
+  /* ---------- export bookings to CSV (opens in Excel) ---------- */
+  function csvCell(v) { v = (v == null ? '' : String(v)); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function exportCSV() {
+    const rows = D.listAppointments({});
+    const header = [t('date'), t('time'), t('doctor'), t('service'), t('patient'), t('phone'), 'Email', t('channel'), t('note')];
+    const docName = (id) => { const d = D.getDoctor(id); return d ? d.name : ''; };
+    const svcName = (id) => { const s = D.getAllServices().find((x) => x.id === id); return s ? serviceName(s) : ''; };
+    const lines = [header].concat(rows.map((a) => [a.dateISO, a.time, docName(a.doctorId), svcName(a.serviceId), a.patientName, a.patientPhone, a.patientEmail || '', channelLabel(a.channel), a.note || '']));
+    const csv = '﻿' + lines.map((r) => r.map(csvCell).join(',')).join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url; link.download = 'dental-clinic-bookings-' + isoToday() + '.csv';
+    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  /* ---------- async write helpers ---------- */
+  async function doCancel(id) { await D.cancelAppointment(id); render(); }
+  async function addAppointment() {
+    const a = state.add;
+    if (!a.doctorId || !a.serviceId || !a.time || a.name.trim().length < 2 || !/^\+?[0-9\s\-()]{6,20}$/.test(a.phone)) {
+      state.msg = t('fill_required'); render(); return;
+    }
+    const res = await D.createAppointment({
+      doctorId: a.doctorId, serviceId: a.serviceId, dateISO: a.dateISO, time: a.time,
+      patientName: a.name, patientPhone: a.phone, note: a.note, channel: a.channel,
+    });
+    if (res.ok) {
+      state.add = { doctorId: '', serviceId: '', dateISO: a.dateISO, time: '', name: '', phone: '', channel: a.channel, note: '' };
+      state.msg = t('added_ok'); state.tab = 'schedule'; state.dateISO = a.dateISO; render();
+    } else { state.msg = res.reason === 'taken' ? t('slot_taken') : (res.reason === 'error' ? t('save_err') : t('fill_required')); render(); }
+  }
+  async function toggleDocActive(id) { const d = D.getDoctor(id); if (d) { await D.upsertDoctor({ id: id, active: !d.active }); render(); } }
+  async function deleteDoc(id) { await D.removeDoctor(id); render(); }
+  async function addDoctor() {
+    const name = (root.querySelector('#newdoc-name') || {}).value || '';
+    const role = (root.querySelector('#newdoc-role') || {}).value || '';
+    if (name.trim().length < 2) { state.msg = t('fill_required'); return render(); }
+    const services = Array.from(root.querySelectorAll('[data-newdoc-svc]:checked')).map((c) => c.getAttribute('data-newdoc-svc'));
+    try { await D.upsertDoctor({ name: name.trim(), role_ka: role, role_en: role, services: services, active: true }); state.msg = t('added_ok'); }
+    catch (e) { state.msg = t('save_err'); }
+    render();
+  }
+  async function toggleSvcActive(id) { const s = D.getAllServices().find((x) => x.id === id); if (s) { await D.upsertService({ id: id, active: !s.active }); render(); } }
+  async function saveSvc(id) {
+    const dur = root.querySelector(`[data-svc-dur="${id}"]`);
+    const pf = root.querySelector(`[data-svc-from="${id}"]`);
+    const pt = root.querySelector(`[data-svc-to="${id}"]`);
+    try { await D.upsertService({ id: id, dur: parseInt(dur && dur.value, 10) || 30, priceFrom: parseInt(pf && pf.value, 10) || 0, priceTo: parseInt(pt && pt.value, 10) || 0 }); state.msg = t('added_ok'); }
+    catch (e) { state.msg = t('save_err'); }
+    render();
+  }
+  async function addService() {
+    const ka = (root.querySelector('#newsvc-ka') || {}).value || '';
+    const en = (root.querySelector('#newsvc-en') || {}).value || '';
+    const dur = parseInt((root.querySelector('#newsvc-dur') || {}).value, 10) || 30;
+    const pf = parseInt((root.querySelector('#newsvc-from') || {}).value, 10) || 0;
+    const pt = parseInt((root.querySelector('#newsvc-to') || {}).value, 10) || 0;
+    if (ka.trim().length < 2 && en.trim().length < 2) { state.msg = t('fill_required'); return render(); }
+    try { await D.upsertService({ name_ka: ka.trim() || en.trim(), name_en: en.trim() || ka.trim(), dur: dur, priceFrom: pf, priceTo: pt, active: true }); state.msg = t('added_ok'); }
+    catch (e) { state.msg = t('save_err'); }
+    render();
+  }
+  async function saveHours() {
+    const toMinV = (v) => { const p = (v || '').split(':').map(Number); return (p[0] || 0) * 60 + (p[1] || 0); };
+    const days = Array.from(root.querySelectorAll('[data-hours-day]:checked')).map((c) => parseInt(c.getAttribute('data-hours-day'), 10));
+    try {
+      await D.setHours({
+        openMin: toMinV((root.querySelector('#h-open') || {}).value),
+        closeMin: toMinV((root.querySelector('#h-close') || {}).value),
+        satCloseMin: toMinV((root.querySelector('#h-sat') || {}).value),
+        days: days,
+      });
+      state.msg = t('added_ok');
+    } catch (e) { state.msg = t('save_err'); }
+    render();
+  }
+
   /* ---------- interactions ---------- */
   function onClick(e) {
     const btn = e.target.closest('[data-act]'); if (!btn) return;
     const act = btn.getAttribute('data-act'); const id = btn.getAttribute('data-id');
     if (act === 'login') return tryLogin();
-    if (act === 'logout') { setAuthed(false); state.msg = ''; return render(); }
+    if (act === 'logout') return doLogout();
     if (act === 'lang') { const next = lang() === 'ka' ? 'en' : 'ka'; if (typeof applyLang === 'function') applyLang(next); else document.documentElement.lang = next; render(); return; }
     if (act === 'tab') { state.tab = id; state.msg = ''; return render(); }
-
-    if (act === 'cancel') { if (window.confirm(t('cancel_confirm'))) { D.cancelAppointment(id); render(); } return; }
-
+    if (act === 'export') return exportCSV();
+    if (act === 'cancel') { if (window.confirm(t('cancel_confirm'))) doCancel(id); return; }
     if (act === 'addAppt') return addAppointment();
-
-    if (act === 'docActive') { const d = D.getDoctor(id); if (d) { D.upsertDoctor({ id, active: !d.active }); render(); } return; }
-    if (act === 'docDelete') { if (window.confirm(t('cancel_confirm'))) { D.removeDoctor(id); render(); } return; }
+    if (act === 'docActive') return toggleDocActive(id);
+    if (act === 'docDelete') { if (window.confirm(t('cancel_confirm'))) deleteDoc(id); return; }
     if (act === 'docAdd') return addDoctor();
-
-    if (act === 'svcActive') { const s = D.getAllServices().find((x) => x.id === id); if (s) { D.upsertService({ id, active: !s.active }); render(); } return; }
-    if (act === 'svcSave') {
-      const dur = root.querySelector(`[data-svc-dur="${id}"]`);
-      const pf = root.querySelector(`[data-svc-from="${id}"]`);
-      const pt = root.querySelector(`[data-svc-to="${id}"]`);
-      D.upsertService({ id, dur: parseInt(dur && dur.value, 10) || 30, priceFrom: parseInt(pf && pf.value, 10) || 0, priceTo: parseInt(pt && pt.value, 10) || 0 });
-      state.msg = t('added_ok'); render(); return;
-    }
+    if (act === 'svcActive') return toggleSvcActive(id);
+    if (act === 'svcSave') return saveSvc(id);
     if (act === 'svcAdd') return addService();
-
     if (act === 'hoursSave') return saveHours();
   }
 
@@ -305,62 +397,20 @@
     if (['name', 'phone', 'note', 'channel'].includes(f)) { state.add[f] = e.target.value; return; }
   }
 
-  function addAppointment() {
-    const a = state.add;
-    if (!a.doctorId || !a.serviceId || !a.time || a.name.trim().length < 2 || !/^\+?[0-9\s\-()]{6,20}$/.test(a.phone)) {
-      state.msg = t('fill_required'); render(); return;
-    }
-    const res = D.createAppointment({
-      doctorId: a.doctorId, serviceId: a.serviceId, dateISO: a.dateISO, time: a.time,
-      patientName: a.name, patientPhone: a.phone, note: a.note, channel: a.channel,
-    });
-    if (res.ok) {
-      state.add = { doctorId: '', serviceId: '', dateISO: a.dateISO, time: '', name: '', phone: '', channel: a.channel, note: '' };
-      state.msg = t('added_ok'); state.tab = 'schedule'; state.dateISO = a.dateISO; render();
-    } else { state.msg = res.reason === 'taken' ? t('slot_taken') : t('fill_required'); render(); }
-  }
-
-  function addDoctor() {
-    const name = (root.querySelector('#newdoc-name') || {}).value || '';
-    const role = (root.querySelector('#newdoc-role') || {}).value || '';
-    if (name.trim().length < 2) { state.msg = t('fill_required'); return render(); }
-    const services = Array.from(root.querySelectorAll('[data-newdoc-svc]:checked')).map((c) => c.getAttribute('data-newdoc-svc'));
-    D.upsertDoctor({ id: 'doc' + Date.now(), name: name.trim(), roleKey: '', role_ka: role, role_en: role, services, active: true });
-    state.msg = t('added_ok'); render();
-  }
-
-  function addService() {
-    const ka = (root.querySelector('#newsvc-ka') || {}).value || '';
-    const en = (root.querySelector('#newsvc-en') || {}).value || '';
-    const dur = parseInt((root.querySelector('#newsvc-dur') || {}).value, 10) || 30;
-    const pf = parseInt((root.querySelector('#newsvc-from') || {}).value, 10) || 0;
-    const pt = parseInt((root.querySelector('#newsvc-to') || {}).value, 10) || 0;
-    if (ka.trim().length < 2 && en.trim().length < 2) { state.msg = t('fill_required'); return render(); }
-    D.upsertService({ id: 'svc' + Date.now(), name_ka: ka.trim() || en.trim(), name_en: en.trim() || ka.trim(), dur, priceFrom: pf, priceTo: pt, active: true });
-    state.msg = t('added_ok'); render();
-  }
-
-  function saveHours() {
-    const toMin = (v) => { const [h, m] = (v || '').split(':').map(Number); return (h || 0) * 60 + (m || 0); };
-    const days = Array.from(root.querySelectorAll('[data-hours-day]:checked')).map((c) => parseInt(c.getAttribute('data-hours-day'), 10));
-    D.setHours({
-      openMin: toMin((root.querySelector('#h-open') || {}).value),
-      closeMin: toMin((root.querySelector('#h-close') || {}).value),
-      satCloseMin: toMin((root.querySelector('#h-sat') || {}).value),
-      stepMin: parseInt((root.querySelector('#h-step') || {}).value, 10) || 30,
-      days,
-    });
-    state.msg = t('added_ok'); render();
-  }
-
   /* ---------- init ---------- */
-  function init() {
+  async function init() {
     root = document.getElementById('adminApp');
     if (!root || !D) return;
     root.addEventListener('click', onClick);
     root.addEventListener('input', onInput);
     window.onLangChange = render;
-    render();
+    if (authed()) {
+      renderLoading();
+      try { await ensureLoaded(true); render(); }
+      catch (e) { await doLogout(); }
+    } else {
+      renderLogin(false);
+    }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
