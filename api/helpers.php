@@ -28,6 +28,8 @@ function db(): PDO {
         PDO::ATTR_EMULATE_PREPARES => false,
       ]
     );
+    // The booking overlap lock relies on gap-locking, which needs this level.
+    $pdo->exec('SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ');
   }
   return $pdo;
 }
@@ -65,9 +67,18 @@ function check_origin(): void {
 /* ---------- staff session ---------- */
 function session_boot(): void {
   if (session_status() === PHP_SESSION_ACTIVE) return;
+  // Private session store + 12h lifetime, so shared-host garbage collection
+  // (default ~24 min) never logs staff out mid-shift.
+  $sessDir = __DIR__ . '/sessions';
+  if (!is_dir($sessDir)) {
+    @mkdir($sessDir, 0700, true);
+    @file_put_contents($sessDir . '/.htaccess', "Require all denied\n");
+  }
+  if (is_dir($sessDir) && is_writable($sessDir)) session_save_path($sessDir);
+  ini_set('session.gc_maxlifetime', '43200');
   session_name('dcgt_admin');
   session_set_cookie_params([
-    'lifetime' => 0,
+    'lifetime' => 43200,
     'path' => '/',
     'secure' => !empty($_SERVER['HTTPS']),
     'httponly' => true,

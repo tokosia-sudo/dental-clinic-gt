@@ -51,6 +51,8 @@ if ($entity === 'appointment' && $action === 'create') {
     );
     $q->execute([$doctorId, $endsAt, $startsAt]);
     if ($q->fetch()) { $pdo->rollBack(); json_err('taken', 409); }
+    $pdo->prepare("DELETE FROM appointments WHERE doctor_id = ? AND starts_at = ? AND status = 'cancelled'")
+        ->execute([$doctorId, $startsAt]);
     $ins = $pdo->prepare(
       'INSERT INTO appointments
          (doctor_id, service_id, starts_at, ends_at, patient_name, patient_phone, patient_email, note, channel, status)
@@ -61,7 +63,7 @@ if ($entity === 'appointment' && $action === 'create') {
     $pdo->commit();
   } catch (PDOException $e) {
     if ($pdo->inTransaction()) $pdo->rollBack();
-    if ((string)$e->getCode() === '23000') json_err('taken', 409);
+    if (in_array((string)$e->getCode(), ['23000', '40001'], true)) json_err('taken', 409);
     json_err('error', 500);
   }
 

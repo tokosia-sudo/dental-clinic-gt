@@ -5,6 +5,7 @@ node_modules/
 .env
 .env.*
 api/config.local.php
+api/sessions/
 *.pem
 *.key
 *.p12

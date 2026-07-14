@@ -58,6 +58,11 @@ try {
   $q->execute([$doctorId, $endsAt, $startsAt]);
   if ($q->fetch()) { $pdo->rollBack(); json_err('taken', 409); }
 
+  // A previously CANCELLED booking at this exact time would still trip the
+  // unique key — clear it so the freed slot is genuinely bookable again.
+  $pdo->prepare("DELETE FROM appointments WHERE doctor_id = ? AND starts_at = ? AND status = 'cancelled'")
+      ->execute([$doctorId, $startsAt]);
+
   $ins = $pdo->prepare(
     'INSERT INTO appointments
        (doctor_id, service_id, starts_at, ends_at, patient_name, patient_phone, patient_email, note, channel, status)
@@ -71,7 +76,9 @@ try {
   $pdo->commit();
 } catch (PDOException $e) {
   if ($pdo->inTransaction()) $pdo->rollBack();
-  if ((string)$e->getCode() === '23000') json_err('taken', 409); // unique key hit
+  // 23000 = unique key hit, 40001 = deadlock between two simultaneous bookings —
+  // either way the other booking won, so this slot is taken.
+  if (in_array((string)$e->getCode(), ['23000', '40001'], true)) json_err('taken', 409);
   json_err('error', 500);
 }
 
