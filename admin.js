@@ -161,8 +161,12 @@
             <span>${esc(a.patientName)} · <a href="tel:${esc(a.patientPhone)}">${esc(a.patientPhone)}</a></span>
             ${a.note ? `<em>${esc(a.note)}</em>` : ''}
           </div>
-          <span class="adm-chan chan-${esc(a.channel)}">${esc(channelLabel(a.channel))}</span>
-          <button type="button" class="adm-x" data-act="cancel" data-id="${esc(a.id)}" title="${esc(t('cancel'))}">✕</button>
+          <div class="adm-appt-side">
+            <span class="adm-chan chan-${esc(a.channel)}">${esc(channelLabel(a.channel))}</span>
+            <div class="adm-appt-btns">
+              <button type="button" class="adm-x" data-act="cancel" data-id="${esc(a.id)}" title="${esc(t('cancel'))}">✕</button>
+            </div>
+          </div>
         </div>`;
       }).join('') : `<p class="adm-empty sm">${esc(t('no_appts'))}</p>`;
       return `<section class="adm-doc-col"><h3>${esc(doc.name)} <small>${esc(doctorRole(doc))}</small></h3>${rows}</section>`;
@@ -212,13 +216,13 @@
     const docs = D.getAllDoctors();
     const services = D.getAllServices();
     const rows = docs.map((d) => `<tr>
-      <td><strong>${esc(d.name)}</strong><br><small>${esc(doctorRole(d))}</small></td>
-      <td>${d.services.map((sid) => { const s = services.find((x) => x.id === sid); return `<span class="adm-pill">${esc(serviceName(s))}</span>`; }).join(' ')}</td>
-      <td><button type="button" class="adm-toggle${d.active ? ' on' : ''}" data-act="docActive" data-id="${esc(d.id)}">${esc(d.active ? t('active') : t('inactive'))}</button></td>
-      <td><button type="button" class="adm-x" data-act="docDelete" data-id="${esc(d.id)}">${esc(t('remove'))}</button></td>
+      <td data-label="${esc(t('name'))}"><span class="adm-cell-stack"><strong>${esc(d.name)}</strong><small>${esc(doctorRole(d))}</small></span></td>
+      <td data-label="${esc(t('services_label'))}">${d.services.map((sid) => { const s = services.find((x) => x.id === sid); return `<span class="adm-pill">${esc(serviceName(s))}</span>`; }).join(' ')}</td>
+      <td data-label="${esc(t('active'))}"><button type="button" class="adm-toggle${d.active ? ' on' : ''}" data-act="docActive" data-id="${esc(d.id)}">${esc(d.active ? t('active') : t('inactive'))}</button></td>
+      <td data-label="${esc(t('action'))}"><button type="button" class="adm-x" data-act="docDelete" data-id="${esc(d.id)}">${esc(t('remove'))}</button></td>
     </tr>`).join('');
     const svcChecks = services.map((s) => `<label class="adm-check"><input type="checkbox" data-newdoc-svc="${s.id}" /> ${esc(serviceName(s))}</label>`).join('');
-    return `<table class="adm-table"><thead><tr><th>${esc(t('name'))}</th><th>${esc(t('services_label'))}</th><th>${esc(t('active'))}</th><th>${esc(t('action'))}</th></tr></thead><tbody>${rows}</tbody></table>
+    return `<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>${esc(t('name'))}</th><th>${esc(t('services_label'))}</th><th>${esc(t('active'))}</th><th>${esc(t('action'))}</th></tr></thead><tbody>${rows}</tbody></table></div>
       <div class="adm-card">
         <h3>${esc(t('add'))}: ${esc(t('doctor'))}</h3>
         <div class="field-row">
@@ -234,14 +238,14 @@
   function renderServices() {
     const services = D.getAllServices();
     const rows = services.map((s) => `<tr>
-      <td><strong>${esc(serviceName(s))}</strong></td>
-      <td><input type="number" class="adm-num" min="10" max="240" step="5" value="${s.dur}" data-svc-dur="${s.id}" /> ${esc(t('min') || 'min')}</td>
-      <td><input type="number" class="adm-num" min="0" step="10" value="${s.priceFrom || 0}" data-svc-from="${s.id}" /></td>
-      <td><input type="number" class="adm-num" min="0" step="10" value="${s.priceTo || 0}" data-svc-to="${s.id}" /></td>
-      <td><button type="button" class="adm-toggle${s.active ? ' on' : ''}" data-act="svcActive" data-id="${esc(s.id)}">${esc(s.active ? t('active') : t('inactive'))}</button></td>
-      <td><button type="button" class="btn btn-ghost btn-sm" data-act="svcSave" data-id="${esc(s.id)}">${esc(t('save'))}</button></td>
+      <td data-label="${esc(t('service'))}"><strong>${esc(serviceName(s))}</strong></td>
+      <td data-label="${esc(t('duration_min'))}"><input type="number" class="adm-num" min="10" max="240" step="5" value="${s.dur}" data-svc-dur="${s.id}" /> ${esc(t('min') || 'min')}</td>
+      <td data-label="${esc(t('price_from'))}"><input type="number" class="adm-num" min="0" step="10" value="${s.priceFrom || 0}" data-svc-from="${s.id}" /></td>
+      <td data-label="${esc(t('price_to'))}"><input type="number" class="adm-num" min="0" step="10" value="${s.priceTo || 0}" data-svc-to="${s.id}" /></td>
+      <td data-label="${esc(t('active'))}"><button type="button" class="adm-toggle${s.active ? ' on' : ''}" data-act="svcActive" data-id="${esc(s.id)}">${esc(s.active ? t('active') : t('inactive'))}</button></td>
+      <td data-label="${esc(t('action'))}"><button type="button" class="btn btn-ghost btn-sm" data-act="svcSave" data-id="${esc(s.id)}">${esc(t('save'))}</button></td>
     </tr>`).join('');
-    return `<table class="adm-table"><thead><tr><th>${esc(t('service'))}</th><th>${esc(t('duration_min'))}</th><th>${esc(t('price_from'))}</th><th>${esc(t('price_to'))}</th><th>${esc(t('active'))}</th><th>${esc(t('action'))}</th></tr></thead><tbody>${rows}</tbody></table>
+    return `<div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>${esc(t('service'))}</th><th>${esc(t('duration_min'))}</th><th>${esc(t('price_from'))}</th><th>${esc(t('price_to'))}</th><th>${esc(t('active'))}</th><th>${esc(t('action'))}</th></tr></thead><tbody>${rows}</tbody></table></div>
       <div class="adm-card">
         <h3>${esc(t('add'))}: ${esc(t('service'))}</h3>
         <div class="field-row">
@@ -285,6 +289,10 @@
     else if (state.tab === 'services') inner = renderServices();
     else if (state.tab === 'hours') inner = renderHours();
     root.innerHTML = renderShell(inner);
+    // The tab strip scrolls horizontally on phones and is rebuilt on every render —
+    // bring the active tab back into view so it never gets "lost" off-screen.
+    const activeTab = root.querySelector('.adm-tab.is-active');
+    if (activeTab && activeTab.scrollIntoView) activeTab.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   }
 
   /* ---------- export bookings to CSV (opens in Excel) ---------- */

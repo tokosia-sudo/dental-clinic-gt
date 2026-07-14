@@ -344,8 +344,8 @@ p  { color: var(--muted); }
 .bk-chip.is-active { background: var(--blue-600); border-color: var(--blue-600); color: #fff; }
 .bk-chip.is-active small { color: rgba(255, 255, 255, .85); }
 
-.bk-dates { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .4rem; scrollbar-width: thin; }
-.bk-date { flex: 0 0 auto; width: 64px; display: flex; flex-direction: column; align-items: center; gap: 1px; background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: .55rem .3rem; color: var(--ink); transition: border-color .15s ease, background .15s ease, color .15s ease; }
+.bk-dates { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .4rem; scrollbar-width: thin; -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+.bk-date { flex: 0 0 auto; width: 64px; scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; gap: 1px; background: var(--surface); border: 1.5px solid var(--line); border-radius: var(--radius-sm); padding: .55rem .3rem; color: var(--ink); transition: border-color .15s ease, background .15s ease, color .15s ease; }
 .bk-date small, .bk-date span { font-size: .66rem; color: var(--muted); text-transform: capitalize; }
 .bk-date strong { font-size: 1.2rem; line-height: 1.15; }
 .bk-date:hover { border-color: var(--blue-300); }
@@ -545,15 +545,28 @@ p  { color: var(--muted); }
   /* Booking CTA inside the mobile menu so it's always reachable */
   .nav .nav-cta { display: inline-flex; width: 100%; margin-top: .6rem; }
 
-  /* Sticky bottom action bar on phones */
+  /* Sticky bottom action bar on phones (padding respects the iPhone home indicator) */
   .mobile-bar {
     display: grid; grid-template-columns: 1fr 1fr;
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 95;
     background: var(--white); border-top: 1px solid var(--line);
     box-shadow: 0 -6px 20px rgba(20, 60, 90, .1);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
-  body { padding-bottom: 66px; }
-  .to-top { bottom: 78px; }
+  body { padding-bottom: 66px; padding-bottom: calc(66px + env(safe-area-inset-bottom, 0px)); }
+  .to-top { bottom: 78px; bottom: calc(78px + env(safe-area-inset-bottom, 0px)); }
+
+  /* iOS Safari zooms into any field whose text is under 16px — keep inputs at 16px on phones */
+  .field input, .field select, .field textarea { font-size: 16px; }
+
+  /* Photos: shorter, landscape crop on phones — no more screen-tall stretched images */
+  .media-hero { aspect-ratio: 16 / 11; max-height: 320px; }
+  .media-about { aspect-ratio: 16 / 11; max-height: 300px; }
+  .hero-visual, .about-visual { width: 100%; }
+
+  /* Comfortable tap sizes in the booking widget */
+  .bk-slot { min-height: 48px; }
+  .bk-date { width: 68px; padding-block: .65rem; }
 
   /* Booking page: keep the header uncluttered on phones (brand already links home) */
   .header-actions .btn-ghost { display: none; }

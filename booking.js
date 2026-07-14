@@ -159,6 +159,10 @@
     if (state.done) { root.innerHTML = renderSuccess(); const el = root.querySelector('.bk-success'); if (el) el.focus(); return; }
     root.innerHTML = renderServices() + renderDoctors() + renderDates() + renderSlots() + renderDetails() +
       `<p class="bk-demo">${esc(t('demo_note'))}</p>`;
+    // The date strip is rebuilt on every render and would snap back to the start —
+    // keep the selected day visible (matters on phones where only ~4 days fit).
+    const activeDate = root.querySelector('.bk-date.is-active');
+    if (activeDate && activeDate.scrollIntoView) activeDate.scrollIntoView({ inline: 'center', block: 'nearest' });
   }
 
   /* ---------- interactions ---------- */

@@ -4,10 +4,10 @@
    ============================================================ */
 
 .adm-body-page { background: var(--surface); }
-.adm-app { min-height: 100vh; }
+.adm-app { min-height: 100vh; min-height: 100dvh; }
 
 /* ---------- Login ---------- */
-.adm-login { min-height: 100vh; display: grid; place-items: center; padding: 1.5rem; }
+.adm-login { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: 1.5rem; }
 .adm-login-card { width: 100%; max-width: 380px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow); padding: 2rem; text-align: center; }
 .adm-login-card .brand-mark { margin: 0 auto 1rem; }
 .adm-login-card h1 { font-size: 1.4rem; }
@@ -54,19 +54,22 @@
 .adm-doc-col { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
 .adm-doc-col h3 { font-size: 1rem; margin-bottom: .8rem; padding-bottom: .6rem; border-bottom: 1px solid var(--line); }
 .adm-doc-col h3 small { color: var(--blue-600); font-weight: 600; font-size: .78rem; display: block; }
-.adm-appt { display: grid; grid-template-columns: auto 1fr auto; gap: .6rem; align-items: start; padding: .7rem 0; border-bottom: 1px solid var(--surface-2); position: relative; }
+.adm-appt { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .6rem; align-items: start; padding: .7rem 0; border-bottom: 1px solid var(--surface-2); position: relative; }
 .adm-appt:last-child { border-bottom: none; }
 .adm-appt-time { font-weight: 700; color: var(--ink); font-size: .85rem; line-height: 1.2; }
 .adm-appt-time small { display: block; color: var(--muted); font-weight: 500; font-size: .68rem; }
+.adm-appt-main { min-width: 0; overflow-wrap: anywhere; }
 .adm-appt-main strong { display: block; font-size: .9rem; }
 .adm-appt-main span { font-size: .8rem; color: var(--muted); }
 .adm-appt-main em { display: block; font-size: .76rem; color: var(--muted); font-style: italic; margin-top: 2px; }
-.adm-chan { align-self: center; font-size: .66rem; font-weight: 700; padding: .2rem .5rem; border-radius: 999px; white-space: nowrap; }
+.adm-appt-side { display: flex; flex-direction: column; align-items: flex-end; gap: .35rem; }
+.adm-appt-btns { display: flex; gap: .2rem; }
+.adm-chan { font-size: .66rem; font-weight: 700; padding: .2rem .5rem; border-radius: 999px; white-space: nowrap; }
 .chan-online { background: var(--blue-50); color: var(--blue-700); }
 .chan-phone { background: #E7F6EE; color: #1F7A50; }
 .chan-messenger { background: #EDE9FB; color: #6048C7; }
 .chan-walkin { background: #FBF1E3; color: #9A6A1E; }
-.adm-x { background: none; border: none; color: var(--muted); font-size: .9rem; cursor: pointer; line-height: 1; padding: .2rem; border-radius: 6px; }
+.adm-x { display: inline-grid; place-items: center; min-width: 34px; min-height: 34px; background: none; border: none; color: var(--muted); font-size: .9rem; cursor: pointer; line-height: 1; padding: .2rem .5rem; border-radius: 8px; }
 .adm-x:hover { color: var(--danger); background: #FCEDED; }
 
 /* ---------- Forms / cards ---------- */
@@ -76,10 +79,12 @@
 .adm-form .field, .adm-card .field { margin-bottom: 1rem; }
 .adm-checks { display: flex; flex-wrap: wrap; gap: .5rem 1rem; }
 .adm-check { display: inline-flex; align-items: center; gap: .4rem; font-size: .9rem; color: var(--ink); }
-.adm-num { width: 90px; }
+.adm-num { width: 90px; font: inherit; font-size: .9rem; color: var(--ink); padding: .4rem .55rem; border: 1.5px solid var(--line); border-radius: 8px; background: var(--surface); }
+.adm-cell-stack { display: inline-flex; flex-direction: column; }
 
 /* ---------- Tables ---------- */
-.adm-table { width: 100%; border-collapse: collapse; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.adm-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius); }
+.adm-table { width: 100%; min-width: 560px; border-collapse: collapse; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
 .adm-table th, .adm-table td { text-align: left; padding: .8rem 1rem; border-bottom: 1px solid var(--surface-2); font-size: .88rem; vertical-align: middle; }
 .adm-table th { background: var(--surface); font-size: .76rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
 .adm-table tr:last-child td { border-bottom: none; }
@@ -87,9 +92,55 @@
 .adm-toggle { border: 1.5px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: .3rem .8rem; font-size: .78rem; font-weight: 600; cursor: pointer; }
 .adm-toggle.on { background: #E7F6EE; border-color: #BFE6CF; color: #1F7A50; }
 
-@media (max-width: 560px) {
+/* ============================================================
+   Mobile — the panel must be fully usable on a phone
+   ============================================================ */
+@media (max-width: 760px) {
+  /* Topbar: compact, no crowding */
+  .adm-topbar { padding: .7rem 1rem; gap: .6rem; }
+  .adm-brand { gap: .5rem; }
+  .adm-brand .brand-mark { width: 32px; height: 32px; }
+  .adm-brand strong { font-size: .95rem; white-space: nowrap; }
+  .adm-tag { display: none; }
+  .adm-top-actions { margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
+  .adm-top-actions .btn-sm, .adm-top-actions .lang-toggle { min-height: 40px; }
+
+  /* Tabs: one horizontally-scrollable row of pill buttons */
+  .adm-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; gap: .45rem; padding: .8rem 1rem .2rem; scrollbar-width: none; }
+  .adm-tabs::-webkit-scrollbar { display: none; }
+  .adm-tab { flex: 0 0 auto; white-space: nowrap; min-height: 42px; border: 1.5px solid var(--line); border-radius: 999px; padding: .5rem 1rem; }
+  .adm-tab.is-active { background: var(--blue-600); border-color: var(--blue-600); color: #fff; box-shadow: none; }
+
+  .adm-msg { margin: .8rem 1rem 0; }
+  .adm-body { padding: 1rem 1rem 3rem; }
+
+  /* Bigger touch targets */
+  .adm-x { min-width: 42px; min-height: 42px; }
+  .adm-toggle { min-height: 38px; padding: .35rem .9rem; }
+  .adm-check { min-height: 40px; }
+  .adm-check input { width: 20px; height: 20px; accent-color: var(--blue-600); }
+  .adm-form, .adm-card { padding: 1rem; }
+  .adm-form .btn, .adm-card .btn-primary { width: 100%; min-height: 46px; }
+}
+
+@media (max-width: 640px) {
+  /* Schedule controls stack full-width */
+  .adm-controls { flex-direction: column; align-items: stretch; gap: .7rem; }
+  .adm-controls .field { width: 100%; }
+  .adm-count { text-align: center; }
+  .adm-controls .btn { width: 100%; min-height: 44px; }
+
+  /* Tables become labelled cards — every value keeps its column name */
+  .adm-table-wrap { overflow: visible; border-radius: 0; }
+  .adm-table { min-width: 0; border: none; background: none; overflow: visible; border-radius: 0; }
   .adm-table thead { display: none; }
-  .adm-table, .adm-table tbody, .adm-table tr, .adm-table td { display: block; width: 100%; }
-  .adm-table tr { border-bottom: 1px solid var(--line); padding: .5rem 0; }
-  .adm-table td { border: none; padding: .35rem 1rem; }
+  .adm-table, .adm-table tbody { display: block; width: 100%; }
+  .adm-table tr { display: block; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .3rem .9rem; margin-bottom: .7rem; box-shadow: var(--shadow-sm); }
+  .adm-table tr:last-child td { border-bottom: 1px solid var(--surface-2); }
+  .adm-table td { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: .3rem .5rem; border: none; border-bottom: 1px solid var(--surface-2); padding: .55rem 0; font-size: .9rem; }
+  .adm-table tr td:last-child { border-bottom: none; }
+  .adm-table td::before { content: attr(data-label); flex: 0 0 auto; margin-right: auto; padding-right: .8rem; font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .adm-table td:not([data-label])::before, .adm-table td[data-label=""]::before { content: none; }
+  .adm-table td .adm-cell-stack { align-items: flex-end; text-align: right; }
+  .adm-num { width: 110px; min-height: 42px; font-size: 16px; }
 }
