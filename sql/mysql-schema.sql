@@ -75,6 +75,14 @@ CREATE TABLE IF NOT EXISTS staff_users (
   created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Editable site texts & photo versions (admin "საიტი" tab).
+-- Keys look like 'ka:hero_title' / 'en:hero_title' / 'img_ver_hero'.
+-- A missing key means the site shows its built-in default text.
+CREATE TABLE IF NOT EXISTS site_content (
+  k VARCHAR(100) NOT NULL PRIMARY KEY,
+  v TEXT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Brute-force protection for the admin login
 CREATE TABLE IF NOT EXISTS login_attempts (
   id           BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,

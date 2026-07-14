@@ -37,6 +37,14 @@ if ($what === 'catalog') {
   json_out($out);
 }
 
+if ($what === 'content') {
+  // Editable site texts + photo versions (public — it IS the site's content)
+  $rows = db()->query('SELECT k, v FROM site_content')->fetchAll();
+  $out = [];
+  foreach ($rows as $r) $out[$r['k']] = $r['v'];
+  json_out($out);
+}
+
 if ($what === 'busy') {
   // Today onwards; both booked and finished visits block their slot.
   $rows = db()->prepare(

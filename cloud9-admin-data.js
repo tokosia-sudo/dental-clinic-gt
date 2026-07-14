@@ -252,6 +252,30 @@ window.ClinicData = (function () {
     return data.id;
   }
 
+  /* ---------- editable site content ---------- */
+  async function getSiteContent() {
+    return apiGet('public.php?what=content');
+  }
+  async function setSiteContent(items) {
+    await apiManage({ entity: 'content', action: 'set', items: items });
+    return true;
+  }
+  async function uploadSitePhoto(slot, file) {
+    const fd = new FormData();
+    fd.append('slot', slot);
+    fd.append('photo', file);
+    const res = await fetch(API + 'admin/upload.php', { method: 'POST', body: fd });
+    if (res.status === 401) window.SB.setSession(false);
+    const data = await res.json().catch(function () { return null; });
+    if (!res.ok || !data || !data.ok) {
+      const e = new Error('upload -> ' + res.status);
+      e.status = res.status;
+      e.reason = (data && data.reason) || 'error';
+      throw e;
+    }
+    return data;
+  }
+
   /* ---------- hours ---------- */
   async function setHours(h) {
     hours = Object.assign({}, hours, h);
@@ -281,6 +305,9 @@ window.ClinicData = (function () {
     removeDoctor: removeDoctor,
     upsertService: upsertService,
     setHours: setHours,
+    getSiteContent: getSiteContent,
+    setSiteContent: setSiteContent,
+    uploadSitePhoto: uploadSitePhoto,
     toHHMM: toHHMM,
     toMin: toMin,
   };

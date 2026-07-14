@@ -43,6 +43,21 @@
       rep_month: 'თვე', rep_total: 'თვის ნავაჭრი', rep_visits: 'დასრულებული ვიზიტი',
       rep_by_day: 'დღეების მიხედვით', rep_none: 'ამ თვეში დასრულებული ვიზიტი ჯერ არ არის.',
       rep_date: 'თარიღი', rep_count: 'ვიზიტი',
+      tab_site: 'საიტი',
+      site_note: 'აქ შეცვლილი ტექსტი მაშინვე გამოჩნდება საიტზე. დაცარიელებული ველი საწყის ტექსტს დააბრუნებს.',
+      site_ka: 'ქართული', site_en: 'ინგლისური',
+      site_f_hero_eyebrow: 'ბანერის ზედა წარწერა',
+      site_f_hero_title: 'მთავარი სათაური',
+      site_f_hero_subtitle: 'მთავარი ქვესათაური',
+      site_f_about_title: '„რატომ ჩვენ" — სათაური',
+      site_f_about_text: '„რატომ ჩვენ" — ტექსტი',
+      site_f_contact_addr: 'მისამართი',
+      site_f_contact_hours: 'სამუშაო საათები (ტექსტი საიტზე)',
+      site_photos: 'ფოტოები',
+      site_photo_hero: 'მთავარი ფოტო (ბანერი)',
+      site_photo_about: '„რატომ ჩვენ" ფოტო',
+      site_upload: 'ატვირთვა',
+      site_photo_note: 'მხოლოდ JPEG ფაილი, მაქსიმუმ 5MB. ატვირთვისთანავე შეიცვლება საიტზე.',
     },
     en: {
       panel: 'Admin panel',
@@ -74,6 +89,21 @@
       rep_month: 'Month', rep_total: 'Month takings', rep_visits: 'completed visits',
       rep_by_day: 'By day', rep_none: 'No completed visits this month yet.',
       rep_date: 'Date', rep_count: 'Visits',
+      tab_site: 'Site',
+      site_note: 'Text changed here shows on the site right away. An emptied field brings the default text back.',
+      site_ka: 'Georgian', site_en: 'English',
+      site_f_hero_eyebrow: 'Hero eyebrow line',
+      site_f_hero_title: 'Main headline',
+      site_f_hero_subtitle: 'Main subtitle',
+      site_f_about_title: '"Why us" — title',
+      site_f_about_text: '"Why us" — text',
+      site_f_contact_addr: 'Address',
+      site_f_contact_hours: 'Working hours (site text)',
+      site_photos: 'Photos',
+      site_photo_hero: 'Hero photo',
+      site_photo_about: '"Why us" photo',
+      site_upload: 'Upload',
+      site_photo_note: 'JPEG only, max 5MB. Replaces the site photo immediately.',
     },
   };
 
@@ -117,6 +147,7 @@
     msg: '',
     pay: null, // { id, split, amt1, m1, amt2, m2, err } — open "finish visit" form
     repMonth: isoToday().slice(0, 7),
+    site: null, // cached editable site texts (the "საიტი" tab)
   };
   let root = null;
   let loaded = false;
@@ -164,6 +195,8 @@
   /* ---------- shell ---------- */
   function renderShell(inner) {
     const tabs = ['schedule', 'add', 'doctors', 'services', 'hours', 'reports'];
+    // Site-content editing exists only on the self-hosted (cloud9) backend.
+    if (typeof D.getSiteContent === 'function') tabs.push('site');
     return `<header class="adm-topbar">
       <div class="adm-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2C8.5 2 7 4 4.8 4 3 4 2 5.5 2 8c0 3 1 5 1.8 8.5.5 2.2 1 4.5 2.2 4.5 1.3 0 1.4-2.5 2-4.5.4-1.4.9-2.5 2-2.5s1.6 1.1 2 2.5c.6 2 .7 4.5 2 4.5 1.2 0 1.7-2.3 2.2-4.5C21.9 13 23 11 23 8c0-2.5-1-4-2.8-4C18 4 16.5 2 12 2z"/></svg></span>
         <strong>Dental Clinic GT</strong><span class="adm-tag">${esc(t('panel'))}</span></div>
@@ -424,6 +457,61 @@
       <div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>${esc(t('rep_date'))}</th><th>${esc(t('rep_count'))}</th><th>${esc(t('pay_total'))}</th><th>${esc(payMethodLabel('tbc'))}</th><th>${esc(payMethodLabel('bog'))}</th><th>${esc(payMethodLabel('cash'))}</th><th>${esc(payMethodLabel('installment'))}</th>${docHead}</tr></thead><tbody>${rows}${totalRow}</tbody></table></div>`;
   }
 
+  /* ---------- tab: site content (texts + photos) ---------- */
+  const SITE_FIELDS = ['hero_eyebrow', 'hero_title', 'hero_subtitle', 'about_title', 'about_text', 'contact_addr', 'contact_hours'];
+  function renderSite() {
+    if (!state.site) {
+      D.getSiteContent()
+        .then(function (map) { state.site = map || {}; render(); })
+        .catch(function () { state.site = {}; render(); });
+      return `<p class="adm-empty">${esc(t('loading'))}</p>`;
+    }
+    const dict = (typeof I18N !== 'undefined') ? I18N : { ka: {}, en: {} };
+    const cards = SITE_FIELDS.map((k) => {
+      const ka = state.site['ka:' + k] != null ? state.site['ka:' + k] : (dict.ka[k] || '');
+      const en = state.site['en:' + k] != null ? state.site['en:' + k] : (dict.en[k] || '');
+      const multiline = (k === 'hero_subtitle' || k === 'about_text');
+      const inp = (lang, val) => multiline
+        ? `<textarea data-site-k="${lang}:${k}" rows="3">${esc(val)}</textarea>`
+        : `<input type="text" data-site-k="${lang}:${k}" value="${esc(val)}" />`;
+      return `<div class="adm-card"><h3>${esc(t('site_f_' + k))}</h3>
+        <div class="field-row">
+          <div class="field"><label>${esc(t('site_ka'))}</label>${inp('ka', ka)}</div>
+          <div class="field"><label>${esc(t('site_en'))}</label>${inp('en', en)}</div>
+        </div></div>`;
+    }).join('');
+    return `<p class="adm-pay-ref">${esc(t('site_note'))}</p>
+      ${cards}
+      <div class="adm-card">
+        <button type="button" class="btn btn-primary" data-act="siteSave">${esc(t('save'))}</button>
+      </div>
+      <div class="adm-card">
+        <h3>${esc(t('site_photos'))}</h3>
+        <p class="adm-pay-ref">${esc(t('site_photo_note'))}</p>
+        <div class="field"><label>${esc(t('site_photo_hero'))}</label><input type="file" id="site-photo-hero" accept="image/jpeg" /></div>
+        <button type="button" class="btn btn-ghost btn-sm" data-act="sitePhoto" data-id="hero">${esc(t('site_upload'))}</button>
+        <div class="field" style="margin-top:1rem"><label>${esc(t('site_photo_about'))}</label><input type="file" id="site-photo-about" accept="image/jpeg" /></div>
+        <button type="button" class="btn btn-ghost btn-sm" data-act="sitePhoto" data-id="about">${esc(t('site_upload'))}</button>
+      </div>`;
+  }
+  async function saveSiteContent() {
+    const items = {};
+    root.querySelectorAll('[data-site-k]').forEach(function (el) {
+      items[el.getAttribute('data-site-k')] = el.value;
+    });
+    try { await D.setSiteContent(items); state.site = null; state.msg = t('added_ok'); }
+    catch (e) { state.msg = t('save_err'); }
+    render();
+  }
+  async function uploadSitePhotoFromForm(slot) {
+    const inp = root.querySelector('#site-photo-' + slot);
+    const file = inp && inp.files && inp.files[0];
+    if (!file) { state.msg = t('fill_required'); return render(); }
+    try { await D.uploadSitePhoto(slot, file); state.msg = t('added_ok'); }
+    catch (e) { state.msg = t('save_err'); }
+    render();
+  }
+
   /* ---------- render ---------- */
   function render() {
     if (!root) return;
@@ -435,6 +523,7 @@
     else if (state.tab === 'services') inner = renderServices();
     else if (state.tab === 'hours') inner = renderHours();
     else if (state.tab === 'reports') inner = renderReports();
+    else if (state.tab === 'site') inner = renderSite();
     root.innerHTML = renderShell(inner);
     // The tab strip scrolls horizontally on phones and is rebuilt on every render —
     // bring the active tab back into view so it never gets "lost" off-screen.
@@ -583,9 +672,11 @@
     if (act === 'login') return tryLogin();
     if (act === 'logout') return doLogout();
     if (act === 'lang') { const next = lang() === 'ka' ? 'en' : 'ka'; if (typeof applyLang === 'function') applyLang(next); else document.documentElement.lang = next; render(); return; }
-    if (act === 'tab') { state.tab = id; state.msg = ''; state.pay = null; return render(); }
+    if (act === 'tab') { state.tab = id; state.msg = ''; state.pay = null; if (id === 'site') state.site = null; return render(); }
     if (act === 'export') return exportCSV();
     if (act === 'exportReport') return exportReportCSV();
+    if (act === 'siteSave') return saveSiteContent();
+    if (act === 'sitePhoto') return uploadSitePhotoFromForm(id);
     if (act === 'payOpen') return openPayForm(id);
     if (act === 'payClose') { state.pay = null; return render(); }
     if (act === 'paySplit') { if (state.pay) { state.pay.split = !state.pay.split; state.pay.err = ''; } return render(); }

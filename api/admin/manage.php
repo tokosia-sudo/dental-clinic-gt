@@ -175,6 +175,23 @@ if ($entity === 'service' && $action === 'upsert') {
   json_out(['ok' => true, 'id' => $id]);
 }
 
+/* ---------------- site content (front-page texts) ---------------- */
+if ($entity === 'content' && $action === 'set') {
+  $items = $in['items'] ?? null;
+  if (!is_array($items) || count($items) > 200) json_err('invalid');
+  $up = $pdo->prepare('INSERT INTO site_content (k, v) VALUES (?, ?) ON DUPLICATE KEY UPDATE v = VALUES(v)');
+  $del = $pdo->prepare('DELETE FROM site_content WHERE k = ?');
+  foreach ($items as $k => $v) {
+    if (!is_string($k) || !preg_match('/^(ka|en):[a-zA-Z0-9_]{1,80}$/', $k)) json_err('invalid');
+    $v = (string)$v;
+    if (mb_strlen($v) > 5000) json_err('invalid');
+    // An emptied field returns the site to its built-in default text.
+    if (trim($v) === '') $del->execute([$k]);
+    else $up->execute([$k, $v]);
+  }
+  json_out(['ok' => true]);
+}
+
 /* ---------------- working hours ---------------- */
 if ($entity === 'hours' && $action === 'set') {
   $open = max(0, min(1440, (int)($in['openMin'] ?? 600)));
