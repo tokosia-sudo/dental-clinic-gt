@@ -124,6 +124,7 @@
 .adm-kpi-main small, .adm-kpi-main span { color: rgba(255, 255, 255, .8); }
 .adm-kpi-main strong { color: #fff; font-size: 1.35rem; }
 .adm-rep-h { font-size: 1rem; margin: 0 0 .8rem; }
+.adm-row-total td { background: var(--surface); border-top: 2px solid var(--line); }
 
 /* ============================================================
    Mobile — the panel must be fully usable on a phone

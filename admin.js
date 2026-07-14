@@ -388,8 +388,16 @@
     if (!done.length) return head + kpis + `<p class="adm-empty">${esc(t('rep_none'))}</p>`;
     const byDay = {};
     done.forEach((a) => { (byDay[a.dateISO] = byDay[a.dateISO] || []).push(a); });
+    // One column per doctor who has completed visits this month
+    const perDoc = {};
+    done.forEach((a) => { perDoc[a.doctorId] = (perDoc[a.doctorId] || 0) + methodTotals([a]).total; });
+    const repDocs = D.getAllDoctors().filter((doc) => perDoc[doc.id] != null);
     const rows = Object.keys(byDay).sort().map((d) => {
       const r = methodTotals(byDay[d]);
+      const docCells = repDocs.map((doc) => {
+        const v = methodTotals(byDay[d].filter((a) => a.doctorId === doc.id)).total;
+        return `<td data-label="${esc(doc.name)}">${v ? gel(v) : '—'}</td>`;
+      }).join('');
       return `<tr>
         <td data-label="${esc(t('rep_date'))}"><strong>${esc(d)}</strong></td>
         <td data-label="${esc(t('rep_count'))}">${byDay[d].length}</td>
@@ -398,10 +406,22 @@
         <td data-label="${esc(payMethodLabel('bog'))}">${gel(r.by.bog)}</td>
         <td data-label="${esc(payMethodLabel('cash'))}">${gel(r.by.cash)}</td>
         <td data-label="${esc(payMethodLabel('installment'))}">${gel(r.by.installment)}</td>
+        ${docCells}
       </tr>`;
     }).join('');
+    const totalRow = `<tr class="adm-row-total">
+      <td data-label="${esc(t('rep_date'))}"><strong>${esc(t('pay_total'))}</strong></td>
+      <td data-label="${esc(t('rep_count'))}"><strong>${done.length}</strong></td>
+      <td data-label="${esc(t('pay_total'))}"><strong>${gel(mt.total)} ₾</strong></td>
+      <td data-label="${esc(payMethodLabel('tbc'))}"><strong>${gel(mt.by.tbc)}</strong></td>
+      <td data-label="${esc(payMethodLabel('bog'))}"><strong>${gel(mt.by.bog)}</strong></td>
+      <td data-label="${esc(payMethodLabel('cash'))}"><strong>${gel(mt.by.cash)}</strong></td>
+      <td data-label="${esc(payMethodLabel('installment'))}"><strong>${gel(mt.by.installment)}</strong></td>
+      ${repDocs.map((doc) => `<td data-label="${esc(doc.name)}"><strong>${gel(perDoc[doc.id] || 0)}</strong></td>`).join('')}
+    </tr>`;
+    const docHead = repDocs.map((doc) => `<th>${esc(doc.name)}</th>`).join('');
     return head + kpis + `<h3 class="adm-rep-h">${esc(t('rep_by_day'))}</h3>
-      <div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>${esc(t('rep_date'))}</th><th>${esc(t('rep_count'))}</th><th>${esc(t('pay_total'))}</th><th>${esc(payMethodLabel('tbc'))}</th><th>${esc(payMethodLabel('bog'))}</th><th>${esc(payMethodLabel('cash'))}</th><th>${esc(payMethodLabel('installment'))}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+      <div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>${esc(t('rep_date'))}</th><th>${esc(t('rep_count'))}</th><th>${esc(t('pay_total'))}</th><th>${esc(payMethodLabel('tbc'))}</th><th>${esc(payMethodLabel('bog'))}</th><th>${esc(payMethodLabel('cash'))}</th><th>${esc(payMethodLabel('installment'))}</th>${docHead}</tr></thead><tbody>${rows}${totalRow}</tbody></table></div>`;
   }
 
   /* ---------- render ---------- */
@@ -451,14 +471,20 @@
     const done = D.listAppointments({}).filter((a) => a.status === 'done' && a.dateISO.slice(0, 7) === month);
     const byDay = {};
     done.forEach((a) => { (byDay[a.dateISO] = byDay[a.dateISO] || []).push(a); });
-    const header = [t('rep_date'), t('rep_count'), t('pay_total') + ' (GEL)', payMethodLabel('tbc'), payMethodLabel('bog'), payMethodLabel('cash'), payMethodLabel('installment')];
+    const perDoc = {};
+    done.forEach((a) => { perDoc[a.doctorId] = (perDoc[a.doctorId] || 0) + methodTotals([a]).total; });
+    const repDocs = D.getAllDoctors().filter((doc) => perDoc[doc.id] != null);
+    const header = [t('rep_date'), t('rep_count'), t('pay_total') + ' (GEL)', payMethodLabel('tbc'), payMethodLabel('bog'), payMethodLabel('cash'), payMethodLabel('installment')]
+      .concat(repDocs.map((doc) => doc.name));
     const lines = [header];
     Object.keys(byDay).sort().forEach((d) => {
       const r = methodTotals(byDay[d]);
-      lines.push([d, byDay[d].length, r.total, r.by.tbc, r.by.bog, r.by.cash, r.by.installment]);
+      lines.push([d, byDay[d].length, r.total, r.by.tbc, r.by.bog, r.by.cash, r.by.installment]
+        .concat(repDocs.map((doc) => methodTotals(byDay[d].filter((a) => a.doctorId === doc.id)).total)));
     });
     const mt = methodTotals(done);
-    lines.push([t('pay_total'), done.length, mt.total, mt.by.tbc, mt.by.bog, mt.by.cash, mt.by.installment]);
+    lines.push([t('pay_total'), done.length, mt.total, mt.by.tbc, mt.by.bog, mt.by.cash, mt.by.installment]
+      .concat(repDocs.map((doc) => perDoc[doc.id] || 0)));
     downloadCSV(lines, 'dental-clinic-report-' + month + '.csv');
   }
 
