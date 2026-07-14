@@ -54,17 +54,18 @@
 .adm-doc-col { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 1rem; }
 .adm-doc-col h3 { font-size: 1rem; margin-bottom: .8rem; padding-bottom: .6rem; border-bottom: 1px solid var(--line); }
 .adm-doc-col h3 small { color: var(--blue-600); font-weight: 600; font-size: .78rem; display: block; }
-.adm-appt { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .6rem; align-items: start; padding: .7rem 0; border-bottom: 1px solid var(--surface-2); position: relative; }
+/* Row 1: time | details | channel pill.  Row 2: action buttons on their own
+   full-width line — so the details column is never squeezed by wide buttons. */
+.adm-appt { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "time main chan" "time btns btns"; gap: .2rem .6rem; align-items: start; padding: .7rem 0; border-bottom: 1px solid var(--surface-2); position: relative; }
 .adm-appt:last-child { border-bottom: none; }
-.adm-appt-time { font-weight: 700; color: var(--ink); font-size: .85rem; line-height: 1.2; }
+.adm-appt-time { grid-area: time; font-weight: 700; color: var(--ink); font-size: .85rem; line-height: 1.2; }
 .adm-appt-time small { display: block; color: var(--muted); font-weight: 500; font-size: .68rem; }
-.adm-appt-main { min-width: 0; overflow-wrap: anywhere; }
+.adm-appt-main { grid-area: main; min-width: 0; overflow-wrap: anywhere; }
 .adm-appt-main strong { display: block; font-size: .9rem; }
 .adm-appt-main span { font-size: .8rem; color: var(--muted); }
 .adm-appt-main em { display: block; font-size: .76rem; color: var(--muted); font-style: italic; margin-top: 2px; }
-.adm-appt-side { display: flex; flex-direction: column; align-items: flex-end; gap: .35rem; }
-.adm-appt-btns { display: flex; gap: .2rem; }
-.adm-chan { font-size: .66rem; font-weight: 700; padding: .2rem .5rem; border-radius: 999px; white-space: nowrap; }
+.adm-appt-btns { grid-area: btns; display: flex; justify-content: flex-end; align-items: center; gap: .3rem; margin-top: .25rem; }
+.adm-chan { grid-area: chan; justify-self: end; font-size: .66rem; font-weight: 700; padding: .2rem .5rem; border-radius: 999px; white-space: nowrap; }
 .chan-online { background: var(--blue-50); color: var(--blue-700); }
 .chan-phone { background: #E7F6EE; color: #1F7A50; }
 .chan-messenger { background: #EDE9FB; color: #6048C7; }

@@ -230,10 +230,8 @@
             ${a.note ? `<em>${esc(a.note)}</em>` : ''}
             ${paidLine}
           </div>
-          <div class="adm-appt-side">
-            <span class="adm-chan chan-${esc(a.channel)}">${esc(channelLabel(a.channel))}</span>
-            ${btns}
-          </div>
+          <span class="adm-chan chan-${esc(a.channel)}">${esc(channelLabel(a.channel))}</span>
+          ${btns}
         </div>${payform}`;
       }).join('') : `<p class="adm-empty sm">${esc(t('no_appts'))}</p>`;
       return `<section class="adm-doc-col"><h3>${esc(doc.name)} <small>${esc(doctorRole(doc))}</small></h3>${rows}</section>`;
