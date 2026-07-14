@@ -30,6 +30,19 @@
       pick_time: '— აირჩიეთ დრო —', no_free: 'თავისუფალი დრო არ არის',
       live_banner: 'ცოცხალი რეჟიმი — მონაცემები დაცულ ონლაინ ბაზაშია.',
       back_site: '← საიტზე',
+      tab_reports: 'რეპორტი',
+      complete: 'დასრულება', done_label: 'დასრულებულია', close_label: 'დახურვა',
+      pay_title: 'ვიზიტის დასრულება — გადახდა',
+      pay_amount: 'თანხა (₾)', pay_method: 'გადახდის მეთოდი', pay_ref: 'სერვისის ფასი',
+      pm_tbc: 'TBC ტერმინალი', pm_bog: 'საქ. ბანკის ტერმინალი', pm_cash: 'ნაღდი', pm_installment: 'განვადება',
+      pay_split: '+ გაყოფილი გადახდა (ორი მეთოდი)', pay_split_off: '− მეორე გადახდის მოხსნა',
+      pay_total: 'სულ', pay_save: 'შენახვა და დასრულება',
+      pay_err_amount: 'შეიყვანეთ სწორი თანხა.', pay_err_same: 'აირჩიეთ ორი განსხვავებული მეთოდი.',
+      paid_label: 'გადახდილი',
+      day_total: 'დღის ნავაჭრი', cash_reg: 'სალარო (ნაღდი)', done_count: 'დასრულებული',
+      rep_month: 'თვე', rep_total: 'თვის ნავაჭრი', rep_visits: 'დასრულებული ვიზიტი',
+      rep_by_day: 'დღეების მიხედვით', rep_none: 'ამ თვეში დასრულებული ვიზიტი ჯერ არ არის.',
+      rep_date: 'თარიღი', rep_count: 'ვიზიტი',
     },
     en: {
       panel: 'Admin panel',
@@ -48,6 +61,19 @@
       pick_time: '— pick a time —', no_free: 'No free times',
       live_banner: 'Live mode — data is stored in the secure online database.',
       back_site: '← Site',
+      tab_reports: 'Reports',
+      complete: 'Complete', done_label: 'Completed', close_label: 'Close',
+      pay_title: 'Finish the visit — payment',
+      pay_amount: 'Amount (₾)', pay_method: 'Payment method', pay_ref: 'Service price',
+      pm_tbc: 'TBC terminal', pm_bog: 'BoG terminal', pm_cash: 'Cash', pm_installment: 'Installment',
+      pay_split: '+ Split payment (two methods)', pay_split_off: '− Remove second payment',
+      pay_total: 'Total', pay_save: 'Save & complete',
+      pay_err_amount: 'Enter a valid amount.', pay_err_same: 'Pick two different methods.',
+      paid_label: 'Paid',
+      day_total: 'Day takings', cash_reg: 'Cash register', done_count: 'completed',
+      rep_month: 'Month', rep_total: 'Month takings', rep_visits: 'completed visits',
+      rep_by_day: 'By day', rep_none: 'No completed visits this month yet.',
+      rep_date: 'Date', rep_count: 'Visits',
     },
   };
 
@@ -66,11 +92,31 @@
   function isoToday() { const d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
   function endTime(a) { return D.toHHMM(D.toMin(a.time) + (a.durationMin || 30)); }
 
+  /* ---------- payments helpers ---------- */
+  const PAY_METHODS = ['tbc', 'bog', 'cash', 'installment'];
+  function payMethodLabel(m) { return t('pm_' + m); }
+  function paymentsOf(a) { return Array.isArray(a.payments) ? a.payments : []; }
+  function gel(n) { return (Math.round((Number(n) || 0) * 100) / 100).toLocaleString('en-US'); }
+  function methodTotals(list) {
+    const by = { tbc: 0, bog: 0, cash: 0, installment: 0 };
+    let total = 0;
+    list.forEach(function (a) {
+      paymentsOf(a).forEach(function (p) {
+        const amt = Number(p.amount) || 0;
+        total += amt;
+        if (by[p.method] != null) by[p.method] += amt;
+      });
+    });
+    return { by: by, total: total };
+  }
+
   const state = {
     tab: 'schedule',
     dateISO: isoToday(),
     add: { doctorId: '', serviceId: '', dateISO: isoToday(), time: '', name: '', phone: '', channel: 'phone', note: '' },
     msg: '',
+    pay: null, // { id, split, amt1, m1, amt2, m2, err } — open "finish visit" form
+    repMonth: isoToday().slice(0, 7),
   };
   let root = null;
   let loaded = false;
@@ -117,7 +163,7 @@
 
   /* ---------- shell ---------- */
   function renderShell(inner) {
-    const tabs = ['schedule', 'add', 'doctors', 'services', 'hours'];
+    const tabs = ['schedule', 'add', 'doctors', 'services', 'hours', 'reports'];
     return `<header class="adm-topbar">
       <div class="adm-brand"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2C8.5 2 7 4 4.8 4 3 4 2 5.5 2 8c0 3 1 5 1.8 8.5.5 2.2 1 4.5 2.2 4.5 1.3 0 1.4-2.5 2-4.5.4-1.4.9-2.5 2-2.5s1.6 1.1 2 2.5c.6 2 .7 4.5 2 4.5 1.2 0 1.7-2.3 2.2-4.5C21.9 13 23 11 23 8c0-2.5-1-4-2.8-4C18 4 16.5 2 12 2z"/></svg></span>
         <strong>Dental Clinic GT</strong><span class="adm-tag">${esc(t('panel'))}</span></div>
@@ -150,28 +196,75 @@
       <button type="button" class="btn btn-ghost btn-sm" data-act="export">${esc(t('export'))} ⬇</button>
     </div>`;
     if (!all.length) return head + `<p class="adm-empty">${esc(t('no_appts'))}</p>`;
+
+    // End-of-day takings for the selected date, split by payment method
+    const doneList = all.filter((a) => a.status === 'done');
+    const mt = methodTotals(doneList);
+    const kpis = `<div class="adm-kpis">
+      <div class="adm-kpi adm-kpi-main"><small>${esc(t('day_total'))}</small><strong>${gel(mt.total)} ₾</strong><span>${doneList.length}/${all.length} ${esc(t('done_count'))}</span></div>
+      <div class="adm-kpi"><small>${esc(payMethodLabel('tbc'))}</small><strong>${gel(mt.by.tbc)} ₾</strong></div>
+      <div class="adm-kpi"><small>${esc(payMethodLabel('bog'))}</small><strong>${gel(mt.by.bog)} ₾</strong></div>
+      <div class="adm-kpi"><small>${esc(t('cash_reg'))}</small><strong>${gel(mt.by.cash)} ₾</strong></div>
+      <div class="adm-kpi"><small>${esc(payMethodLabel('installment'))}</small><strong>${gel(mt.by.installment)} ₾</strong></div>
+    </div>`;
+
     const cols = docs.map((doc) => {
       const list = all.filter((a) => a.doctorId === doc.id);
       const rows = list.length ? list.map((a) => {
         const s = D.getAllServices().find((x) => x.id === a.serviceId);
-        return `<div class="adm-appt">
+        const isDone = a.status === 'done';
+        const pays = paymentsOf(a);
+        const paidLine = isDone
+          ? `<em class="adm-paid">✓ ${esc(t('done_label'))}${pays.length ? ` · ${gel(methodTotals([a]).total)} ₾ · ${esc(pays.map((p) => payMethodLabel(p.method)).join(' + '))}` : ''}</em>`
+          : '';
+        const btns = isDone ? '' : `<div class="adm-appt-btns">
+              <button type="button" class="adm-done-btn" data-act="payOpen" data-id="${esc(a.id)}">✓ ${esc(t('complete'))}</button>
+              <button type="button" class="adm-x" data-act="cancel" data-id="${esc(a.id)}" title="${esc(t('cancel'))}">✕</button>
+            </div>`;
+        const payform = (state.pay && String(state.pay.id) === String(a.id)) ? renderPayForm(a, s) : '';
+        return `<div class="adm-appt${isDone ? ' is-done' : ''}">
           <div class="adm-appt-time">${esc(a.time)}–${esc(endTime(a))}<small>${a.durationMin}${esc(t('min') || 'min')}</small></div>
           <div class="adm-appt-main">
             <strong>${esc(serviceName(s))}</strong>
             <span>${esc(a.patientName)} · <a href="tel:${esc(a.patientPhone)}">${esc(a.patientPhone)}</a></span>
             ${a.note ? `<em>${esc(a.note)}</em>` : ''}
+            ${paidLine}
           </div>
           <div class="adm-appt-side">
             <span class="adm-chan chan-${esc(a.channel)}">${esc(channelLabel(a.channel))}</span>
-            <div class="adm-appt-btns">
-              <button type="button" class="adm-x" data-act="cancel" data-id="${esc(a.id)}" title="${esc(t('cancel'))}">✕</button>
-            </div>
+            ${btns}
           </div>
-        </div>`;
+        </div>${payform}`;
       }).join('') : `<p class="adm-empty sm">${esc(t('no_appts'))}</p>`;
       return `<section class="adm-doc-col"><h3>${esc(doc.name)} <small>${esc(doctorRole(doc))}</small></h3>${rows}</section>`;
     }).join('');
-    return head + `<div class="adm-sched">${cols}</div>`;
+    return head + kpis + `<div class="adm-sched">${cols}</div>`;
+  }
+
+  /* ---------- finish-visit payment form ---------- */
+  function payRowHtml(n, method, amount) {
+    return `<div class="adm-pay-row">
+      <select data-pay="m${n}" aria-label="${esc(t('pay_method'))}">${PAY_METHODS.map((m) => `<option value="${m}"${m === method ? ' selected' : ''}>${esc(payMethodLabel(m))}</option>`).join('')}</select>
+      <input type="number" data-pay="amt${n}" min="0" step="0.01" inputmode="decimal" placeholder="0" value="${esc(amount)}" aria-label="${esc(t('pay_amount'))}" />
+    </div>`;
+  }
+  function renderPayForm(a, s) {
+    const p = state.pay;
+    const ref = s && (s.priceFrom || s.priceTo) ? `${gel(s.priceFrom || 0)}–${gel(s.priceTo || 0)} ₾` : '';
+    const total = (parseFloat(p.amt1) || 0) + (p.split ? (parseFloat(p.amt2) || 0) : 0);
+    return `<div class="adm-payform">
+      <h4>${esc(t('pay_title'))}</h4>
+      ${ref ? `<p class="adm-pay-ref">${esc(t('pay_ref'))}: ${esc(ref)}</p>` : ''}
+      ${payRowHtml(1, p.m1, p.amt1)}
+      ${p.split ? payRowHtml(2, p.m2, p.amt2) : ''}
+      <button type="button" class="adm-pay-split" data-act="paySplit">${esc(p.split ? t('pay_split_off') : t('pay_split'))}</button>
+      <p class="adm-pay-total">${esc(t('pay_total'))}: <strong id="payTotal">${gel(total)} ₾</strong></p>
+      ${p.err ? `<p class="adm-err">${esc(p.err)}</p>` : ''}
+      <div class="adm-pay-actions">
+        <button type="button" class="btn btn-primary btn-sm" data-act="payDone" data-id="${esc(a.id)}">${esc(t('pay_save'))}</button>
+        <button type="button" class="btn btn-ghost btn-sm" data-act="payClose">${esc(t('close_label'))}</button>
+      </div>
+    </div>`;
   }
 
   /* ---------- tab: add booking ---------- */
@@ -278,6 +371,41 @@
     </div>`;
   }
 
+  /* ---------- tab: monthly report ---------- */
+  function renderReports() {
+    const month = state.repMonth || isoToday().slice(0, 7);
+    const done = D.listAppointments({}).filter((a) => a.status === 'done' && a.dateISO.slice(0, 7) === month);
+    const mt = methodTotals(done);
+    const head = `<div class="adm-controls">
+      <div class="field"><label for="rep-month">${esc(t('rep_month'))}</label><input id="rep-month" type="month" data-field="repMonth" value="${esc(month)}" /></div>
+      <button type="button" class="btn btn-ghost btn-sm" data-act="exportReport">${esc(t('export'))} ⬇</button>
+    </div>`;
+    const kpis = `<div class="adm-kpis">
+      <div class="adm-kpi adm-kpi-main"><small>${esc(t('rep_total'))}</small><strong>${gel(mt.total)} ₾</strong><span>${done.length} ${esc(t('rep_visits'))}</span></div>
+      <div class="adm-kpi"><small>${esc(payMethodLabel('tbc'))}</small><strong>${gel(mt.by.tbc)} ₾</strong></div>
+      <div class="adm-kpi"><small>${esc(payMethodLabel('bog'))}</small><strong>${gel(mt.by.bog)} ₾</strong></div>
+      <div class="adm-kpi"><small>${esc(t('cash_reg'))}</small><strong>${gel(mt.by.cash)} ₾</strong></div>
+      <div class="adm-kpi"><small>${esc(payMethodLabel('installment'))}</small><strong>${gel(mt.by.installment)} ₾</strong></div>
+    </div>`;
+    if (!done.length) return head + kpis + `<p class="adm-empty">${esc(t('rep_none'))}</p>`;
+    const byDay = {};
+    done.forEach((a) => { (byDay[a.dateISO] = byDay[a.dateISO] || []).push(a); });
+    const rows = Object.keys(byDay).sort().map((d) => {
+      const r = methodTotals(byDay[d]);
+      return `<tr>
+        <td data-label="${esc(t('rep_date'))}"><strong>${esc(d)}</strong></td>
+        <td data-label="${esc(t('rep_count'))}">${byDay[d].length}</td>
+        <td data-label="${esc(t('pay_total'))}"><strong>${gel(r.total)} ₾</strong></td>
+        <td data-label="${esc(payMethodLabel('tbc'))}">${gel(r.by.tbc)}</td>
+        <td data-label="${esc(payMethodLabel('bog'))}">${gel(r.by.bog)}</td>
+        <td data-label="${esc(payMethodLabel('cash'))}">${gel(r.by.cash)}</td>
+        <td data-label="${esc(payMethodLabel('installment'))}">${gel(r.by.installment)}</td>
+      </tr>`;
+    }).join('');
+    return head + kpis + `<h3 class="adm-rep-h">${esc(t('rep_by_day'))}</h3>
+      <div class="adm-table-wrap"><table class="adm-table"><thead><tr><th>${esc(t('rep_date'))}</th><th>${esc(t('rep_count'))}</th><th>${esc(t('pay_total'))}</th><th>${esc(payMethodLabel('tbc'))}</th><th>${esc(payMethodLabel('bog'))}</th><th>${esc(payMethodLabel('cash'))}</th><th>${esc(payMethodLabel('installment'))}</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  }
+
   /* ---------- render ---------- */
   function render() {
     if (!root) return;
@@ -288,6 +416,7 @@
     else if (state.tab === 'doctors') inner = renderDoctors();
     else if (state.tab === 'services') inner = renderServices();
     else if (state.tab === 'hours') inner = renderHours();
+    else if (state.tab === 'reports') inner = renderReports();
     root.innerHTML = renderShell(inner);
     // The tab strip scrolls horizontally on phones and is rebuilt on every render —
     // bring the active tab back into view so it never gets "lost" off-screen.
@@ -295,25 +424,74 @@
     if (activeTab && activeTab.scrollIntoView) activeTab.scrollIntoView({ inline: 'nearest', block: 'nearest' });
   }
 
-  /* ---------- export bookings to CSV (opens in Excel) ---------- */
+  /* ---------- export to CSV (opens in Excel) ---------- */
   function csvCell(v) { v = (v == null ? '' : String(v)); return /[",\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
-  function exportCSV() {
-    const rows = D.listAppointments({});
-    const header = [t('date'), t('time'), t('doctor'), t('service'), t('patient'), t('phone'), 'Email', t('channel'), t('note')];
-    const docName = (id) => { const d = D.getDoctor(id); return d ? d.name : ''; };
-    const svcName = (id) => { const s = D.getAllServices().find((x) => x.id === id); return s ? serviceName(s) : ''; };
-    const lines = [header].concat(rows.map((a) => [a.dateISO, a.time, docName(a.doctorId), svcName(a.serviceId), a.patientName, a.patientPhone, a.patientEmail || '', channelLabel(a.channel), a.note || '']));
+  function downloadCSV(lines, filename) {
     const csv = '﻿' + lines.map((r) => r.map(csvCell).join(',')).join('\r\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = url; link.download = 'dental-clinic-bookings-' + isoToday() + '.csv';
+    link.href = url; link.download = filename;
     document.body.appendChild(link); link.click(); document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  }
+  function exportCSV() {
+    const rows = D.listAppointments({});
+    const header = [t('date'), t('time'), t('doctor'), t('service'), t('patient'), t('phone'), 'Email', t('channel'), t('note'), 'Status', t('paid_label') + ' (GEL)', t('pay_method')];
+    const docName = (id) => { const d = D.getDoctor(id); return d ? d.name : ''; };
+    const svcName = (id) => { const s = D.getAllServices().find((x) => x.id === id); return s ? serviceName(s) : ''; };
+    const lines = [header].concat(rows.map((a) => [
+      a.dateISO, a.time, docName(a.doctorId), svcName(a.serviceId), a.patientName, a.patientPhone, a.patientEmail || '', channelLabel(a.channel), a.note || '',
+      a.status || 'booked',
+      paymentsOf(a).length ? methodTotals([a]).total : '',
+      paymentsOf(a).map((p) => payMethodLabel(p.method) + ' ' + gel(p.amount)).join(' + '),
+    ]));
+    downloadCSV(lines, 'dental-clinic-bookings-' + isoToday() + '.csv');
+  }
+  function exportReportCSV() {
+    const month = state.repMonth || isoToday().slice(0, 7);
+    const done = D.listAppointments({}).filter((a) => a.status === 'done' && a.dateISO.slice(0, 7) === month);
+    const byDay = {};
+    done.forEach((a) => { (byDay[a.dateISO] = byDay[a.dateISO] || []).push(a); });
+    const header = [t('rep_date'), t('rep_count'), t('pay_total') + ' (GEL)', payMethodLabel('tbc'), payMethodLabel('bog'), payMethodLabel('cash'), payMethodLabel('installment')];
+    const lines = [header];
+    Object.keys(byDay).sort().forEach((d) => {
+      const r = methodTotals(byDay[d]);
+      lines.push([d, byDay[d].length, r.total, r.by.tbc, r.by.bog, r.by.cash, r.by.installment]);
+    });
+    const mt = methodTotals(done);
+    lines.push([t('pay_total'), done.length, mt.total, mt.by.tbc, mt.by.bog, mt.by.cash, mt.by.installment]);
+    downloadCSV(lines, 'dental-clinic-report-' + month + '.csv');
   }
 
   /* ---------- async write helpers ---------- */
   async function doCancel(id) { await D.cancelAppointment(id); render(); }
+  function openPayForm(id) {
+    const a = D.listAppointments({}).find((x) => String(x.id) === String(id));
+    if (!a) return;
+    const s = D.getAllServices().find((x) => x.id === a.serviceId);
+    // Pre-fill the amount when the service has one fixed price; otherwise staff types it.
+    const pre = (s && s.priceFrom && s.priceFrom === s.priceTo) ? String(s.priceFrom) : '';
+    state.pay = { id: id, split: false, amt1: pre, m1: 'tbc', amt2: '', m2: 'cash', err: '' };
+    render();
+  }
+  async function completeWithPayment(id) {
+    const p = state.pay;
+    if (!p || String(p.id) !== String(id)) return;
+    const a1 = parseFloat(p.amt1);
+    if (!isFinite(a1) || a1 <= 0) { p.err = t('pay_err_amount'); return render(); }
+    const pays = [{ method: p.m1, amount: Math.round(a1 * 100) / 100 }];
+    if (p.split) {
+      const a2 = parseFloat(p.amt2);
+      if (!isFinite(a2) || a2 <= 0) { p.err = t('pay_err_amount'); return render(); }
+      if (p.m2 === p.m1) { p.err = t('pay_err_same'); return render(); }
+      pays.push({ method: p.m2, amount: Math.round(a2 * 100) / 100 });
+    }
+    const ok = await D.completeAppointment(id, pays);
+    if (ok) { state.pay = null; state.msg = t('added_ok'); }
+    else { p.err = t('save_err'); }
+    render();
+  }
   async function addAppointment() {
     const a = state.add;
     if (!a.doctorId || !a.serviceId || !a.time || a.name.trim().length < 2 || !/^\+?[0-9\s\-()]{6,20}$/.test(a.phone)) {
@@ -381,8 +559,13 @@
     if (act === 'login') return tryLogin();
     if (act === 'logout') return doLogout();
     if (act === 'lang') { const next = lang() === 'ka' ? 'en' : 'ka'; if (typeof applyLang === 'function') applyLang(next); else document.documentElement.lang = next; render(); return; }
-    if (act === 'tab') { state.tab = id; state.msg = ''; return render(); }
+    if (act === 'tab') { state.tab = id; state.msg = ''; state.pay = null; return render(); }
     if (act === 'export') return exportCSV();
+    if (act === 'exportReport') return exportReportCSV();
+    if (act === 'payOpen') return openPayForm(id);
+    if (act === 'payClose') { state.pay = null; return render(); }
+    if (act === 'paySplit') { if (state.pay) { state.pay.split = !state.pay.split; state.pay.err = ''; } return render(); }
+    if (act === 'payDone') return completeWithPayment(id);
     if (act === 'cancel') { if (window.confirm(t('cancel_confirm'))) doCancel(id); return; }
     if (act === 'addAppt') return addAppointment();
     if (act === 'docActive') return toggleDocActive(id);
@@ -395,9 +578,20 @@
   }
 
   function onInput(e) {
+    // Payment form fields: update state + the live total, without a full re-render
+    // (a re-render would steal focus from the amount input mid-typing).
+    const pf = e.target.getAttribute && e.target.getAttribute('data-pay');
+    if (pf && state.pay) {
+      if (pf === 'amt1' || pf === 'amt2' || pf === 'm1' || pf === 'm2') state.pay[pf] = e.target.value;
+      const total = (parseFloat(state.pay.amt1) || 0) + (state.pay.split ? (parseFloat(state.pay.amt2) || 0) : 0);
+      const el = root.querySelector('#payTotal');
+      if (el) el.textContent = gel(total) + ' ₾';
+      return;
+    }
     const f = e.target.getAttribute && e.target.getAttribute('data-field');
     if (!f) return;
-    if (f === 'schedDate') { state.dateISO = e.target.value; render(); return; }
+    if (f === 'schedDate') { state.dateISO = e.target.value; state.pay = null; render(); return; }
+    if (f === 'repMonth') { if (/^\d{4}-\d{2}$/.test(e.target.value)) { state.repMonth = e.target.value; render(); } return; }
     if (f === 'doctorId') { state.add.doctorId = e.target.value; state.add.serviceId = ''; state.add.time = ''; render(); return; }
     if (f === 'serviceId') { state.add.serviceId = e.target.value; state.add.time = ''; render(); return; }
     if (f === 'addDate') { state.add.dateISO = e.target.value; state.add.time = ''; render(); return; }

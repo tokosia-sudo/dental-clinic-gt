@@ -92,6 +92,35 @@
 .adm-toggle { border: 1.5px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: .3rem .8rem; font-size: .78rem; font-weight: 600; cursor: pointer; }
 .adm-toggle.on { background: #E7F6EE; border-color: #BFE6CF; color: #1F7A50; }
 
+/* ---------- Finishing a visit / payments ---------- */
+.adm-done-btn { display: inline-flex; align-items: center; gap: .3rem; min-height: 34px; background: #E7F6EE; border: 1.5px solid #BFE6CF; color: #1F7A50; border-radius: 999px; padding: .3rem .7rem; font-size: .74rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.adm-done-btn:hover { background: #D6F0E2; }
+.adm-appt.is-done { background: rgba(31, 157, 107, .06); border-radius: 8px; padding-inline: .5rem; margin-inline: -.5rem; }
+.adm-paid { display: block; font-size: .78rem; color: #1F7A50; font-style: normal; font-weight: 600; margin-top: 3px; }
+
+.adm-payform { background: var(--surface); border: 1.5px solid var(--blue-200); border-radius: var(--radius-sm); padding: .9rem; margin: .4rem 0 .8rem; }
+.adm-payform h4 { font-size: .9rem; margin-bottom: .4rem; }
+.adm-pay-ref { font-size: .78rem; color: var(--muted); margin-bottom: .6rem; }
+.adm-pay-row { display: grid; grid-template-columns: 1fr 110px; gap: .5rem; margin-bottom: .5rem; }
+.adm-pay-row select, .adm-pay-row input { font: inherit; font-size: .9rem; color: var(--ink); padding: .5rem .6rem; border: 1.5px solid var(--line); border-radius: 8px; background: var(--white); min-height: 42px; width: 100%; }
+.adm-pay-split { background: none; border: none; color: var(--blue-700); font-size: .8rem; font-weight: 600; padding: .25rem 0; cursor: pointer; }
+.adm-pay-split:hover { text-decoration: underline; }
+.adm-pay-total { font-size: .9rem; color: var(--ink); margin: .4rem 0 .6rem; }
+.adm-payform .adm-err { margin-bottom: .5rem; }
+.adm-pay-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.adm-pay-actions .btn { flex: 1 1 auto; }
+
+/* ---------- KPI tiles (day takings / monthly report) ---------- */
+.adm-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .7rem; margin-bottom: 1.2rem; }
+.adm-kpi { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: .8rem .9rem; min-width: 0; }
+.adm-kpi small { display: block; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-bottom: .2rem; }
+.adm-kpi strong { font-size: 1.15rem; color: var(--ink); white-space: nowrap; }
+.adm-kpi span { display: block; font-size: .74rem; color: var(--muted); margin-top: .15rem; }
+.adm-kpi-main { background: linear-gradient(135deg, var(--blue-600), var(--blue-700)); border-color: var(--blue-600); }
+.adm-kpi-main small, .adm-kpi-main span { color: rgba(255, 255, 255, .8); }
+.adm-kpi-main strong { color: #fff; font-size: 1.35rem; }
+.adm-rep-h { font-size: 1rem; margin: 0 0 .8rem; }
+
 /* ============================================================
    Mobile — the panel must be fully usable on a phone
    ============================================================ */
@@ -143,4 +172,10 @@
   .adm-table td:not([data-label])::before, .adm-table td[data-label=""]::before { content: none; }
   .adm-table td .adm-cell-stack { align-items: flex-end; text-align: right; }
   .adm-num { width: 110px; min-height: 42px; font-size: 16px; }
+
+  /* Payments & KPI tiles on phones */
+  .adm-pay-row { grid-template-columns: 1fr 100px; }
+  .adm-pay-row select, .adm-pay-row input { font-size: 16px; }
+  .adm-kpis { grid-template-columns: repeat(2, 1fr); }
+  .adm-done-btn { min-height: 42px; }
 }

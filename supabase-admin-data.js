@@ -76,7 +76,8 @@ window.ClinicData = (function () {
     return { id: a.id, doctorId: a.doctor_id, serviceId: a.service_id, dateISO: tb.dateISO, time: tb.time,
       durationMin: Math.round((new Date(a.ends_at) - new Date(a.starts_at)) / 60000),
       patientName: a.patient_name, patientPhone: a.patient_phone, patientEmail: a.patient_email,
-      note: a.note, channel: a.channel || 'online', status: a.status };
+      note: a.note, channel: a.channel || 'online', status: a.status,
+      payments: (Array.isArray(a.payments) ? a.payments : null) };
   }
 
   /* ---------- load everything (after sign-in) ---------- */
@@ -156,6 +157,17 @@ window.ClinicData = (function () {
       await window.SB.write('PATCH', 'appointments?id=eq.' + encodeURIComponent(id), { status: 'cancelled' });
       const a = appts.find(function (x) { return String(x.id) === String(id); });
       if (a) a.status = 'cancelled';
+      return true;
+    } catch (e) { return false; }
+  }
+
+  /* Mark a visit finished and record how it was paid.
+     payments: [{ method: 'tbc'|'bog'|'cash'|'installment', amount: number }] (1 or 2 items) */
+  async function completeAppointment(id, payments) {
+    try {
+      await window.SB.write('PATCH', 'appointments?id=eq.' + encodeURIComponent(id), { status: 'done', payments: payments });
+      const a = appts.find(function (x) { return String(x.id) === String(id); });
+      if (a) { a.status = 'done'; a.payments = payments; }
       return true;
     } catch (e) { return false; }
   }
@@ -257,6 +269,7 @@ window.ClinicData = (function () {
     listAppointments: listAppointments,
     createAppointment: createAppointment,
     cancelAppointment: cancelAppointment,
+    completeAppointment: completeAppointment,
     upsertDoctor: upsertDoctor,
     removeDoctor: removeDoctor,
     upsertService: upsertService,
