@@ -7,6 +7,15 @@ declare(strict_types=1);
 
 date_default_timezone_set('Asia/Tbilisi');
 
+/* Any unexpected crash returns clean JSON instead of a blank 500 page
+   (and never leaks internal details to visitors). */
+set_exception_handler(function (Throwable $e) {
+  http_response_code(500);
+  header('Content-Type: application/json; charset=utf-8');
+  echo json_encode(['ok' => false, 'reason' => 'server_error']);
+  exit;
+});
+
 function cfg(string $key, $default = null) {
   static $c = null;
   if ($c === null) {
@@ -19,17 +28,23 @@ function cfg(string $key, $default = null) {
 function db(): PDO {
   static $pdo = null;
   if ($pdo === null) {
-    $pdo = new PDO(
-      'mysql:host=' . cfg('db_host', 'localhost') . ';dbname=' . cfg('db_name') . ';charset=utf8mb4',
-      cfg('db_user'), cfg('db_pass'),
-      [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false,
-      ]
-    );
-    // The booking overlap lock relies on gap-locking, which needs this level.
-    $pdo->exec('SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ');
+    if (!is_file(__DIR__ . '/config.local.php')) json_err('config_missing', 500);
+    if (strpos((string)cfg('db_name', ''), 'PASTE_') === 0) json_err('config_not_filled', 500);
+    try {
+      $pdo = new PDO(
+        'mysql:host=' . cfg('db_host', 'localhost') . ';dbname=' . cfg('db_name') . ';charset=utf8mb4',
+        cfg('db_user'), cfg('db_pass'),
+        [
+          PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+          PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+          PDO::ATTR_EMULATE_PREPARES => false,
+        ]
+      );
+      // The booking overlap lock relies on gap-locking, which needs this level.
+      $pdo->exec('SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ');
+    } catch (PDOException $e) {
+      json_err('db_connect_failed', 500); // wrong db name/user/password in config.local.php
+    }
   }
   return $pdo;
 }
